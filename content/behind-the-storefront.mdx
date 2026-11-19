@@ -1,0 +1,390 @@
+export const metadata = {
+  title: "Behind the Storefront",
+  subtitle: "How a Clothing Retail Store Actually Operates Behind the Scenes",
+  description:
+    "An independent, field-based exploratory study of clothing retail operations, based on an interview with a Store Manager.",
+  date: "2026-11-11",
+  category: "Independent exploratory study",
+};
+
+## The World Behind the Storefront
+
+Most of us know a clothing store from the front: the racks, the fitting rooms, the billing counter. But every garment on those racks arrived through a chain of steps that customers never see: receiving, sorting, storage, pricing decisions, quality checks and reporting.
+
+I wanted to understand that hidden side. So I visited a well-known clothing retail store in my locality and spent roughly an hour to an hour and a half in a semi-structured interview with its Store Manager. I prepared questions in advance, but let the conversation follow wherever the manager's answers led. I recorded everything in handwritten notes. During the interview, the manager also showed me some screens of the store's SAP-based system, which I describe in the technology section.
+
+### What this study is, and is not
+
+This is an **independent, exploratory investigation**. It is not an official company report, and it is not endorsed by the retailer. The retailer is not named here.
+
+- Almost everything below comes from **one interview**. The only direct observation was a brief look at some SAP screens shown by the manager. I had no access to company records, and I did not use the system myself.
+- The manager did not share confidential technical details, so where I describe systems, I describe only what was said to me.
+- Where an explanation was inconsistent or I was unsure, I say so plainly instead of filling the gap.
+
+I have tried to keep two things apart throughout: **what the manager told me**, and **what I make of it**. Both are valuable, but they should never be confused.
+
+## The Journey of a Product
+
+According to the Store Manager, a garment does not simply arrive and go onto a rack. It passes through a sequence of stages, each with a defined purpose. The manager described the flow like this:
+
+<Flow
+  title="Figure 1 · The journey of a product"
+  steps={[
+    {
+      label: "Gate Entry",
+      description: "Incoming goods are physically checked and registered in the system.",
+    },
+    {
+      label: "Stock Checking",
+      description: "Stock is checked before it moves further along the chain.",
+    },
+    {
+      label: "GRC (Goods Receiving Centre)",
+      description: "Incoming units are stored here.",
+    },
+    {
+      label: "DC (Distribution Centre)",
+      description: "Goods are categorised and directed to specialised warehouses.",
+    },
+    {
+      label: "Warehouses",
+      description: "Centralised storage spaces.",
+    },
+    {
+      label: "Compartments",
+      description: "Units of storage within a warehouse, used to organise types of merchandise.",
+    },
+  ]}
+  note="Based on the Store Manager's description. This is my own diagram, not an official company document."
+/>
+
+### Gate Entry and stock checking
+
+The first stage is **Gate Entry**, where incoming goods are physically checked and registered in the system. Stock is then checked before moving further along the chain.
+
+### GRC: where units are held
+
+The **Goods Receiving Centre (GRC)** is where incoming units are stored after entry.
+
+### DC: sorting and direction
+
+The **Distribution Centre (DC)** is where goods are categorised and directed to specialised warehouses, depending on the type of merchandise.
+
+### Warehouses and compartments
+
+According to the manager, the **warehouses** are centralised storage spaces, and each **compartment** is a unit of storage within a warehouse. Compartments are used to organise different types of merchandise.
+
+<Callout type="uncertain">
+I did not establish where these warehouses are located, how many there are, or how long goods spend at each stage. I have not filled these gaps.
+</Callout>
+
+<Callout type="interpretation">
+The sequence resembles a standard retail supply chain: receive, verify, hold, sort, store. This comparison is mine, not the manager's.
+</Callout>
+
+## Preparing Products for Customers
+
+Once goods reach the store, the next question is how they should appear to customers. The manager explained that this is not left to chance: displays follow a written plan.
+
+### The planogram
+
+A **planogram** is a sheet that specifies how products should be arranged for display. According to the manager, the **Department Manager** prepares it, based on instructions from higher management. Employees then arrange the merchandise accordingly.
+
+### I-rods and gondolas
+
+Clothing is displayed on fixtures that the manager called **gondolas** and **I-rods**. A gondola is a freestanding display unit, and an I-rod is a vertical rod attached to the gondola's shelving, from which merchandise hangs. In this store, the manager's example was clothing hung on I-rods, with L-articles kept in separate sizes: small on one I-rod, medium on another and large on a third, all on the same gondola.
+
+### The Store Manager's role
+
+The Store Manager checks that the floor matches the plan. The manager described checking:
+
+- display compliance and overall presentation
+- damaged products
+- displayed quantities
+- missing stock
+
+The manager said they review the displays frequently, with customer presentation in mind.
+
+<Callout type="manager">
+The planogram is prepared by the Department Manager on instructions from higher management, and the Store Manager checks that the store follows it.
+</Callout>
+
+<Callout type="uncertain">
+The manager did not mention how often planograms change, or whether they differ between stores. I have not assumed either.
+</Callout>
+
+<Callout type="interpretation">
+The pattern here is a separation of duties: one level plans, another executes, and a third verifies. This is my reading of how the roles were described.
+</Callout>
+
+## What Happens to Unsold Clothing?
+
+Not every garment sells at its first price. The manager described a system in which unsold stock moves through three categories, labelled **L**, **M** and **C**, and becomes progressively cheaper.
+
+### The three categories
+
+**L-articles** are units that match in colour, dimensions and size. The manager's example was a gondola where small-sized clothing hangs on one I-rod, medium on another and large on a third, and so on.
+
+**M-articles** are units displayed together on an I-rod with mixed colours and sizes. According to the manager, these are items that went unsold in the L section and were moved here after a period of time.
+
+**C-articles** are units that went unsold in the M section. They are moved to the C section and sold there at a discounted price.
+
+**L → M → C**
+
+### Price labels
+
+The manager said the price label shows which kind of article a customer is looking at. L-articles carry a white label with black text, at full price. M and C articles both carry a yellow label with black text, showing the MRP (maximum retail price) and the discounted price. Both M and C items are discounted, but M items are discounted less than C items.
+
+### What happens after C
+
+The manager said that C-category goods that remain unsold may eventually be sold to **GRTs**, described as businesses that buy unsold products for resale.
+
+<Callout type="manager">
+Unsold stock moves from L to M to C as it ages. L-articles have a white price label, while M and C articles have a yellow one. M items are discounted less than C items, and goods that remain unsold in C may be sold on to GRTs.
+</Callout>
+
+<Callout type="uncertain">
+The manager mentioned that stock moves after "a duration", and I noted roughly two weeks as a possible first threshold, but I am not confident of this figure and I have not treated it as fact. I also did not establish the actual discount percentages in M and C, or what GRT stands for.
+</Callout>
+
+<Callout type="interpretation">
+My notes held two explanations of L, M and C that seemed inconsistent at first. I now read them as describing the same system from two angles: the first explanation described how stock is displayed, and the second described how stock ages. This is my reading, and the manager did not describe it in these terms.
+</Callout>
+
+### Who decides on a discount?
+
+According to the manager, a price or category change goes through an approval process in **SAP**, the store's enterprise software:
+
+<Flow
+  title="Figure 2 · The discount approval process"
+  steps={[
+    {
+      actor: "Department Manager",
+      label: "Identifies products",
+      description: "Spots products that need a discount or a category change.",
+    },
+    {
+      actor: "Department Manager",
+      label: "Reports to the Store Manager",
+    },
+    {
+      actor: "Store Manager",
+      label: "Submits an approval request",
+      description: "The request is made through SAP.",
+    },
+    {
+      actor: "Higher management",
+      label: "Approves or rejects",
+      description: "The decision is made in SAP.",
+    },
+    {
+      actor: "Store Manager",
+      label: "Updates category or price",
+      description: "Done in SAP, after approval.",
+    },
+  ]}
+  note="Based on the Store Manager's description. Not shown: what happens after a rejection, and whether the new price reaches the billing system automatically."
+/>
+
+<Callout type="uncertain">
+I do not know whether the updated price in SAP automatically reaches the billing system, or how long approvals take. The manager did not describe this to me.
+</Callout>
+
+## When Something Goes Wrong
+
+Even with careful receiving and checking, some garments turn out to be defective. The manager had a memorable name for them: **"Villain Articles."**
+
+### How a defect is reported
+
+When an employee finds a defective product, it does not go straight to the top. According to the manager, the report moves up one level at a time:
+
+**Employee → Department Manager → Assistant Store Manager → Store Manager**
+
+### Recording the evidence
+
+Once the report reaches the Store Manager, the defect is documented on video. The manager said they record a video of the defect and upload it to an **internal video portal**. Higher officials review it and discuss the matter with the supplier.
+
+<Flow
+  title="Figure 3 · How a defective product is reported"
+  steps={[
+    {
+      actor: "Employee",
+      label: "Finds and reports a defect",
+    },
+    {
+      actor: "Department Manager",
+      label: "Receives the report and passes it on",
+    },
+    {
+      actor: "Assistant Store Manager",
+      label: "Receives the report and passes it on",
+    },
+    {
+      actor: "Store Manager",
+      label: "Records a video of the defect",
+      description: "The video is uploaded to an internal video portal.",
+    },
+    {
+      actor: "Higher officials",
+      label: "Review the video",
+      description: "They discuss the matter with the supplier.",
+    },
+  ]}
+  note="Based on the Store Manager's description. Not shown: how the matter is finally resolved, which the manager did not tell me."
+/>
+
+<Callout type="manager">
+Defective products are called "Villain Articles." They are reported up the chain to the Store Manager, who records a video of the defect and uploads it to an internal portal for higher officials to review with the supplier.
+</Callout>
+
+<Callout type="uncertain">
+I do not know how this ends. The manager did not tell me whether defective goods are returned, replaced, refunded or written off, or what happens to the physical items in the meantime. The manager spoke about defects only in general terms, so I cannot say which kinds of fault are covered, and I did not establish how long the process takes.
+</Callout>
+
+<Callout type="interpretation">
+Using video as evidence suggests the store needs a record that someone at a distance can judge, and that the supplier relationship is handled above store level. This is my inference. The manager did not say why the process works this way.
+</Callout>
+
+## The People Behind the Operations
+
+A store runs on its people as much as on its stock. The manager described a clear chain of responsibility, from the shop floor up to the company's senior leadership.
+
+### The hierarchy
+
+**Employees → Department Managers → Assistant Store Managers → Store Manager → Regional Manager → Cluster Manager → Higher Management**
+
+The first four levels work inside the store. The last three sit above it.
+
+### How the store is organised by floor
+
+According to the manager, each floor of the store is a department, and a **Department Manager** heads the department on their floor. Each department has an **Assistant Store Manager (ASM)** assigned above the Department Manager. For example, if the first floor were the kids' section, one ASM would be responsible for that department, and the same would apply to every other floor. This example is illustrative and not a description of a specific floor.
+
+### What the Store Manager does
+
+The **Store Manager** is the head of the Assistant Store Managers and supervises every one of them. The manager also described taking part in floor work alongside the ASMs, rather than staying only in an office. The Store Manager also supports staff training, motivates employees and reviews performance.
+
+### When performance falls short
+
+The manager said that when an employee underperforms, management may consider training, motivation, or moving the person to a different department. These were described as options, not as a fixed procedure.
+
+### Tracking attendance and targets
+
+A SAP-based system is used to track attendance, performance and daily targets. I describe the wider technology in a later section.
+
+<Callout type="manager">
+Each floor is a department, headed by a Department Manager and overseen by an ASM. The Store Manager supervises all the ASMs and also takes part in floor work. Underperformance may be met with training, motivation or reassignment.
+</Callout>
+
+<Callout type="uncertain">
+I do not know whether the system automatically flags underperformance, how often performance is reviewed, or who makes the final decision on a reassignment. I did not establish how many floors or ASMs the store has, or what kind of floor work the Store Manager does. The manager also did not describe what the Regional Manager and Cluster Manager do.
+</Callout>
+
+<Callout type="interpretation">
+The ladder of roles resembles the planning, execution and checking pattern I noticed in the display process. The staff-support approach, which tries to help before reassigning, is my reading of how the options were described.
+</Callout>
+
+## The Customer Experience Behind the Scenes
+
+Some of the most important decisions in a store happen at the billing counter. The manager described two systems that shape what customers experience there: the return and exchange policy, and the yearly subscription.
+
+### Returns and exchanges
+
+According to the manager, customers have a **seven-day period** to return or exchange a product. This applies only to eligible product categories, and specific timings apply.
+
+The eligibility check is done by the **billing system**, which verifies automatically whether a purchase qualifies. The manager said this decision is final: the Store Manager cannot override it.
+
+<Callout type="manager">
+Returns and exchanges are allowed within seven days for eligible categories and within specific timings. The billing system checks eligibility automatically, and the Store Manager cannot override its decision.
+</Callout>
+
+<Callout type="uncertain">
+The manager did not name which categories are eligible or which timings apply, so I have not guessed. I also did not establish how the billing system decides eligibility, or what happens when a customer disagrees with its decision.
+</Callout>
+
+<Callout type="interpretation">
+Removing the Store Manager's power to override looks like a deliberate design choice: it keeps decisions consistent across customers and prevents disputes at the counter. This is my inference. The manager did not explain the reasoning.
+</Callout>
+
+### Yearly subscriptions
+
+The store also offers a yearly customer subscription with three tiers, described as **Silver**, **Gold** and **Platinum/Diamond**. Higher tiers give larger discounts. The manager mentioned approximate discounts of 2%, 7% and 11%, but I am not confident of these figures, so I treat them as approximate.
+
+The manager said subscriptions are promoted on **L-articles**. Subscription details are stored in the SAP-based system, and eligible discounts are applied automatically during billing.
+
+<Callout type="uncertain">
+I am unsure of the exact discount percentages, and I am unsure whether the top tier is called Platinum or Diamond. I did not establish the subscription price, how a customer moves between tiers, or how SAP passes subscription data to the billing system.
+</Callout>
+
+<Callout type="interpretation">
+Promoting subscriptions on full-price L-articles may be a way to offer a benefit where the store has the most margin. This is my speculation, not something the manager said, and I have no evidence about the store's margins.
+</Callout>
+
+## The Technology Running the Store
+
+Many of the processes in the earlier sections depend on software. Discount approvals, attendance, targets and subscriptions all came up in connection with a system. This section brings together what the manager told me about the tools themselves.
+
+### The tools the manager uses
+
+According to the manager, the two tools used most are a **proprietary SAP-based system** and **Microsoft Excel**. Reports cover sales, stock, inventory, employee performance and daily targets.
+
+**BI tools or similar software** are used less often, and only for reporting and performance analysis.
+
+### What I saw of the system
+
+During the interview, the manager showed me some screens of the SAP-based system and explained how he uses it to track data, analyse it and make decisions. The screens covered workflows such as logistics, targets, unit checklists and employee records. This was a demonstration, not hands-on use. I did not operate the system, and I did not photograph or record the screens.
+
+<Callout type="uncertain">
+I am not describing exact screens, field names or layouts, because they hold the retailer's internal information and I did not record them. I also cannot say how much of the system the manager showed me.
+</Callout>
+
+### Where SAP appeared in this study
+
+Across the interview, the SAP-based system came up in these places:
+
+- **Discount approvals:** the Store Manager submits requests, higher management approves or rejects them, and the category or price is updated afterwards.
+- **Employee management:** attendance, performance and daily targets.
+- **Logistics and unit checklists:** the manager showed screens for these and said the system handles them.
+- **Subscriptions:** customer subscription details are stored there.
+- **Reporting:** it is one of the main sources for the store's reports.
+
+The billing system was described separately, as the tool that checks return eligibility and applies subscription discounts.
+
+<Callout type="manager">
+The SAP-based system and Excel are the most-used tools. BI and similar tools are used only for reports and performance analysis. Reports cover sales, stock, inventory, employee performance and daily targets.
+</Callout>
+
+<Callout type="uncertain">
+I do not know the exact software behind these tools, how they connect to each other or to the billing system, or who owns each report. I did not establish what Excel is used for, or which BI tool is used. I have no access to the retailer's SAP system or internal records. Apart from the screens the manager showed me, everything here comes from the interview.
+</Callout>
+
+<Callout type="interpretation">
+Excel sitting beside an enterprise system is common in business, since spreadsheets are flexible for quick analysis. I cannot say whether that is why the manager uses it, and this comparison is mine.
+</Callout>
+
+## What I Learned
+
+I went into this interview expecting to learn how a store handles stock. I came away more interested in something else: how much of the store's daily work is organised around one system.
+
+### One system, many processes
+
+In the manager's account, the SAP-based system touched most of the workflows I asked about: logistics, targets, unit checklists, employee records and approvals. The manager described using it to track data, analyse it and form decisions, and said it helps the store avoid duplicated or conflicting data.
+
+### Procedures before action
+
+What struck me most was that changes do not simply happen. A discount, a category change or a defect report passes through defined steps, and in several cases through several people, before it takes effect. In the discount process, for example, the Department Manager identifies, the Store Manager requests, higher management approves, and only then is the change entered.
+
+<Callout type="interpretation">
+My impression is that a system like this makes managerial decisions easier because everyone works from the same records, and the approval steps leave a trail of who decided what. This is my reading. I saw only a few screens in a demonstration and have not seen the system's internals, so I cannot judge how well it works in practice.
+</Callout>
+
+### What this taught me about information systems
+
+Before this study, I thought of enterprise software as a technical product. Here I saw it as part of how responsibility is divided: who may propose, who may approve and who may only follow the result, as with the billing system's return decisions. The technology and the organisation shaped each other, and I could not have understood one without the other. This is the main reason I want to study Business Informatics.
+
+### Limits of this study
+
+- It rests on **one interview** with **one manager** at **one store**, so it cannot be generalised to other stores or to the company.
+- Most findings are the manager's **own account**, and I did not verify them against records or observation.
+- Several questions stayed open, including how the systems connect, how long processes take and how defects are finally resolved. These are flagged throughout.
+
+A natural next step would be to speak with people in other roles, or to study the same processes in another store, to see which parts of this account hold up.

@@ -1,0 +1,185 @@
+export const metadata = {
+  title: "Python for Business Analytics",
+  subtitle: "How Much Programming Does a Business Analyst Really Need?",
+  description:
+    "Exploring the role of Python in Business Informatics, data analysis and business decision-making.",
+  date: "2026-11-19",
+  category: "Learning notes",
+};
+
+## Introduction
+
+As someone planning to pursue Business Informatics, I have been exploring the technical skills that connect business processes with information technology. One area that particularly caught my attention was Python and its role in Business Analytics.
+
+I wanted to understand how much programming knowledge a Business Analyst actually needs and whether learning Python fundamentals would be a useful starting point.
+
+Python is widely used in data analysis, automation, business intelligence and predictive modelling. However, working in Business Analytics does not necessarily require the same programming expertise as software development. Understanding how to process data, automate calculations and apply business logic can be far more relevant.
+
+This article explores the Python fundamentals I believe are worth learning, their practical business applications and the additional skills that could be useful when pursuing Business Informatics.
+
+## Variables and Data Types
+
+Understanding how Python stores and handles information is the starting point.
+
+Key concepts:
+
+- Variables and value assignment
+- Integers and floating-point numbers
+- Strings and Boolean values
+- Type conversion
+
+**Business application:** Working with product prices, sales quantities, customer information and transaction records. Understanding data types is important when preparing and analysing business datasets.
+
+## Conditional Statements and Business Logic
+
+Business processes often follow predefined rules. Python's conditional statements make it possible to translate these rules into code.
+
+Key concepts:
+
+- `if`, `elif` and `else`
+- Comparison operators
+- Logical operators
+
+**Business application:** Automating business rules, such as identifying products with low stock, classifying customers or flagging transactions that require attention.
+
+Try it yourself: change the stock and sales figures below and watch which lines of the Python code would run.
+
+<StockCoverage />
+
+## Loops and Repetitive Data Processing
+
+Businesses work with large collections of records. Loops help process these records without repeating the same instructions manually.
+
+Key concepts:
+
+- `for` loops
+- `while` loops
+- Iterating through lists and dictionaries
+
+**Business application:** Processing sales records, checking product availability and calculating revenue across multiple products.
+
+## Data Structures
+
+Business data needs to be organised before it can be processed effectively. Python offers several built-in structures for this purpose.
+
+- **Lists:** Store collections of items.
+- **Dictionaries:** Store information as key-value pairs.
+- **Tuples:** Store ordered, immutable collections.
+- **Sets:** Store unique elements.
+
+**Business application:** Organising inventory records, supplier information, customer details and sales transactions.
+
+## Functions and Reusable Programming Logic
+
+Functions allow calculations and operations to be written once and reused whenever needed.
+
+Key concepts:
+
+- Function definition using `def`
+- Parameters and arguments
+- Return values
+- Code reusability
+
+**Business application:** Creating reusable calculations for total revenue, average sales, inventory valuation and business performance indicators.
+
+For a Business Analyst, understanding how to write and use simple functions is more important than developing complex software applications.
+
+## Object-Oriented Programming
+
+Object-Oriented Programming (OOP) organises programs around classes and objects that represent real-world entities.
+
+Key concepts:
+
+- Classes and objects
+- Constructors (`__init__`)
+- Instance attributes and methods
+- The `self` parameter
+- Relationships between objects
+
+**Business application:** Consider an inventory management system with:
+
+- `Product`: Product details and stock levels.
+- `Supplier`: Supplier information and delivery details.
+- `PurchaseOrder`: Purchasing transactions.
+
+I find this concept particularly interesting from a Business Informatics perspective because it demonstrates how information systems can represent real business entities and processes.
+
+However, an aspiring Business Analyst generally needs a working understanding of OOP rather than advanced expertise in software architecture.
+
+## Error Handling and Data Validation
+
+Business decisions depend on the quality of the information being analysed. Python provides tools to identify invalid inputs and handle unexpected situations.
+
+Key concepts:
+
+- Handling `ValueError`
+- Validating numerical inputs
+- Checking invalid quantities
+- Handling missing values using `None`
+
+**Business application:** Preventing incorrect calculations caused by negative stock quantities, invalid prices or zero daily demand.
+
+The stock coverage example earlier shows two of these cases: set daily sales to zero to see `None` returned, or enter a negative quantity to see the `ValueError`.
+
+Basic validation is particularly useful when preparing datasets and developing analytical reports.
+
+## Where Python Becomes Useful in Business Analytics
+
+After exploring these fundamentals, I wanted to understand what they could actually help accomplish in a business environment.
+
+Some practical applications include:
+
+- Analysing sales and revenue.
+- Filtering datasets based on business conditions.
+- Identifying products requiring replenishment.
+- Calculating inventory valuation and stock coverage.
+- Automating repetitive calculations.
+- Generating basic operational reports.
+
+These applications demonstrate that Python can be useful for business analysis without requiring advanced programming knowledge.
+
+## What Should a Business Analyst Learn Beyond Python Basics?
+
+Learning Python fundamentals is only part of the journey. For someone interested in Business Analytics, the next step is understanding the tools used to work with actual business datasets.
+
+| Technology or concept | Why it matters |
+|---|---|
+| Pandas | Cleaning, filtering and analysing datasets |
+| NumPy | Numerical calculations |
+| SQL | Retrieving information from databases |
+| Matplotlib | Creating analytical charts |
+| Seaborn | Statistical visualisation |
+| Statistics | Interpreting data and identifying patterns |
+| Machine Learning | Understanding predictive analytics and forecasting |
+
+Alongside Python, SQL is particularly important because Business Analysts often need to retrieve and analyse information stored in databases.
+
+Tools such as Power BI and Tableau are also worth exploring for reporting and dashboard development.
+
+## How Much Python Does a Business Analyst Actually Need?
+
+This was one of the main questions that motivated my exploration.
+
+My understanding is that a Business Analyst does not need to master every aspect of Python. The required level depends on the role, organisation and type of analytical work involved.
+
+For someone starting in Business Analytics, I would prioritise:
+
+1. **Python fundamentals:** Variables, data types, conditions, loops and functions.
+2. **Data manipulation:** Working with Pandas, filtering datasets and handling missing values.
+3. **Basic analysis:** Calculating metrics, identifying trends and summarising business data.
+4. **Visualisation:** Presenting findings through charts and graphs.
+5. **SQL:** Querying databases and retrieving relevant information.
+
+Advanced topics such as Object-Oriented Programming, machine learning and predictive modelling can be explored as career interests and job requirements develop.
+
+The objective should be to use Python confidently to analyse data and solve business problems rather than learning programming concepts without a practical purpose.
+
+## Conclusion
+
+Exploring Python has helped me understand that programming is not limited to software development. It also plays an important role in analysing business data, improving processes and supporting organisational decisions.
+
+As I prepare to pursue Business Informatics, I see Python as a valuable technical skill that can complement an understanding of business processes and information systems.
+
+Rather than aiming to become an advanced programmer, my focus is on learning enough Python to work confidently with data, automate analytical tasks and understand how technology can address practical business challenges.
+
+Ultimately, I want to develop a combination of business understanding and technical knowledge that will allow me to approach organisational problems from both perspectives.
