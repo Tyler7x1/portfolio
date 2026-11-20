@@ -2,6 +2,15 @@ import ProjectCard, { type Project } from "@/components/ProjectCard";
 
 const projects: Project[] = [
   {
+    type: "Data analytics project",
+    title: "Slow-Moving and Dead Stock Analysis System",
+    subtitle: "An inventory analytics system built with Python",
+    description:
+      "A Python-based system that classifies inventory by movement, quantifies the capital tied up in slow-moving and dead stock, and generates business reports and charts. Built on a synthetic dataset simulating an electronics distributor.",
+    tags: ["Python", "Pandas", "Data visualisation", "Inventory analytics"],
+    href: "https://github.com/Tyler7x1/Slow-Moving-Dead-Stock-Analysis",
+  },
+  {
     type: "Independent research",
     title: "Behind the Storefront",
     subtitle: "An Exploratory Study of Clothing Retail Operations",
@@ -29,7 +38,7 @@ const projects: Project[] = [
     ],
     href: "https://github.com/theoneandonlyshadow/Echo-Relay",
     image: "/echorelay.gif",
-  },
+  }
 ];
 
 export default function Projects() {
