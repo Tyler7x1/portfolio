@@ -56,7 +56,7 @@ const SPEED = 0.045; // pixels per millisecond; lower is slower
 function Card({ item }: { item: (typeof findings)[number] }) {
   return (
     <li className="flex w-72 shrink-0">
-      <div className="flex w-full flex-col rounded-2xl border border-black/15 p-5 transition duration-300 hover:-translate-y-1 hover:border-black dark:border-white/20 dark:hover:border-white">
+      <div className="flex w-full flex-col rounded-2xl border border-black/15 bg-black/[0.03] p-5 transition duration-300 hover:-translate-y-1 hover:border-black dark:border-white/20 dark:bg-white/[0.06] dark:hover:border-white">
         <p className="text-xs font-medium uppercase tracking-widest text-black/50 dark:text-white/50">
           {item.label}
         </p>
