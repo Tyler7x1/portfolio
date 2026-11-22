@@ -23,7 +23,7 @@ export default function Home() {
         </p>
         <h1 className="mt-4 text-5xl font-semibold leading-[1.05] tracking-tight sm:text-7xl">
           <span className="intro-word intro-1 inline-block">Business.</span>{" "}
-          <span className="intro-word intro-2 inline-block">Informatics.</span>{" "}
+          <span className="intro-word intro-2 inline-block">Information Systems.</span>{" "}
           <span className="intro-word intro-3 inline-block text-black/40 dark:text-white/40">
             Why not both?
           </span>

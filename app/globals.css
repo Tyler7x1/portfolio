@@ -88,3 +88,10 @@ html[data-intro="play"] .intro-rest {
 .dark .prose :where(code):not(:where(pre code)) {
   background: rgb(255 255 255 / 0.12);
 }
+
+@layer base {
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+}
