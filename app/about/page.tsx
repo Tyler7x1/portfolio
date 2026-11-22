@@ -1,3 +1,7 @@
+import type { IconType } from "react-icons";
+import * as Fa6 from "react-icons/fa6";
+import * as Si from "react-icons/si";
+
 export const metadata = {
   title: "About",
 };
@@ -20,32 +24,146 @@ const education = [
   },
 ];
 
-const skills = [
+type IconName =
+  | "terminal"
+  | "database"
+  | "spreadsheet"
+  | "chip"
+  | "code"
+  | "layout"
+  | "braces";
+
+// logos: official logo names to try, in order.
+// icon: the line icon shown if none of those names exists in the package.
+type Skill = { name: string; logos: string[]; icon: IconName };
+
+const skills: { group: string; items: Skill[] }[] = [
   {
     group: "Core",
-    items: ["Python", "SQLite", "Microsoft Excel", "C"],
+    items: [
+      { name: "Python", logos: ["SiPython"], icon: "terminal" },
+      { name: "SQL", logos: ["FaDatabase"], icon: "database" },
+      {
+        name: "Microsoft Excel",
+        logos: ["SiMicrosoftexcel", "FaFileExcel"],
+        icon: "spreadsheet",
+      },
+      { name: "C", logos: ["SiC"], icon: "chip" },
+    ],
   },
   {
     group: "Also familiar with",
-    items: ["HTML", "CSS", "JavaScript"],
+    items: [
+      { name: "HTML", logos: ["SiHtml5"], icon: "code" },
+      { name: "CSS", logos: ["SiCss3", "SiCss"], icon: "layout" },
+      { name: "JavaScript", logos: ["SiJavascript"], icon: "braces" },
+    ],
   },
 ];
+
+function SkillIcon({ name }: { name: IconName }) {
+  const common = {
+    width: 22,
+    height: 22,
+    viewBox: "0 0 24 24",
+    fill: "none",
+    stroke: "currentColor",
+    strokeWidth: 1.8,
+    strokeLinecap: "round" as const,
+    strokeLinejoin: "round" as const,
+    "aria-hidden": true,
+  };
+
+  switch (name) {
+    case "terminal":
+      return (
+        <svg {...common}>
+          <rect x="3" y="4" width="18" height="16" rx="2" />
+          <path d="m7 10 3 3-3 3M12 16h5" />
+        </svg>
+      );
+    case "database":
+      return (
+        <svg {...common}>
+          <ellipse cx="12" cy="6" rx="8" ry="3" />
+          <path d="M4 6v12c0 1.7 3.6 3 8 3s8-1.3 8-3V6" />
+          <path d="M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3" />
+        </svg>
+      );
+    case "spreadsheet":
+      return (
+        <svg {...common}>
+          <rect x="3" y="4" width="18" height="16" rx="2" />
+          <path d="M3 10h18M3 15h18M10 4v16" />
+        </svg>
+      );
+    case "chip":
+      return (
+        <svg {...common}>
+          <rect x="7" y="7" width="10" height="10" rx="1" />
+          <path d="M10 3v4M14 3v4M10 17v4M14 17v4M3 10h4M3 14h4M17 10h4M17 14h4" />
+        </svg>
+      );
+    case "code":
+      return (
+        <svg {...common}>
+          <path d="m8 7-5 5 5 5M16 7l5 5-5 5M14 5l-4 14" />
+        </svg>
+      );
+    case "layout":
+      return (
+        <svg {...common}>
+          <rect x="3" y="4" width="18" height="16" rx="2" />
+          <path d="M3 9h18M9 9v11" />
+        </svg>
+      );
+    case "braces":
+      return (
+        <svg {...common}>
+          <path d="M8 4C6 4 5 5 5 7v2c0 1.3-1 2.5-2 3 1 .5 2 1.7 2 3v2c0 2 1 3 3 3M16 4c2 0 3 1 3 3v2c0 1.3 1 2.5 2 3-1 .5-2 1.7-2 3v2c0 2-1 3-3 3" />
+        </svg>
+      );
+  }
+}
+
+const allIcons = { ...Si, ...Fa6 } as unknown as Record<
+  string,
+  IconType | undefined
+>;
+
+function SkillLogo({
+  logos,
+  fallback,
+}: {
+  logos: string[];
+  fallback: IconName;
+}) {
+  for (const name of logos) {
+    const Logo = allIcons[name];
+    if (Logo) return <Logo size={22} aria-hidden />;
+  }
+  return <SkillIcon name={fallback} />;
+}
+
+const sectionHeading =
+  "text-sm uppercase tracking-widest text-black/50 dark:text-white/50";
 
 export default function About() {
   return (
     <main className="mx-auto max-w-3xl px-6 pb-24 pt-16">
-      <h1 className="text-4xl font-semibold tracking-tight">About</h1>
+<h1 className="text-4xl font-semibold tracking-tight">About</h1>
+
       <p className="mt-4 max-w-2xl text-lg leading-relaxed text-black/60 dark:text-white/60">
         I&apos;m a Bachelor of Computer Applications graduate from Presidency
         University, Bengaluru, preparing to apply for a Master&apos;s degree in
-        Business Informatics abroad.
+        Business Informatics abroad. My work so far combines independent
+        research on business operations, Python-based analytics and an interest
+        in enterprise information systems.
       </p>
 
       {/* Education */}
       <section className="mt-16">
-        <h2 className="text-sm uppercase tracking-widest text-black/50 dark:text-white/50">
-          Education
-        </h2>
+        <h2 className={sectionHeading}>Education</h2>
 
         <ol className="mt-6 border-l border-black/15 dark:border-white/20">
           {education.map((item) => (
@@ -65,9 +183,7 @@ export default function About() {
 
       {/* Skills */}
       <section className="mt-16">
-        <h2 className="text-sm uppercase tracking-widest text-black/50 dark:text-white/50">
-          Skills
-        </h2>
+        <h2 className={sectionHeading}>Skills</h2>
 
         <div className="mt-6 space-y-8">
           {skills.map((group) => (
@@ -75,13 +191,14 @@ export default function About() {
               <p className="text-sm text-black/50 dark:text-white/50">
                 {group.group}
               </p>
-              <ul className="mt-3 flex flex-wrap gap-2">
+              <ul className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4">
                 {group.items.map((item) => (
                   <li
-                    key={item}
-                    className="cursor-default rounded-full border border-black/20 px-4 py-1.5 text-sm transition duration-300 hover:border-black hover:bg-black hover:text-white motion-safe:hover:-translate-y-1 dark:border-white/30 dark:hover:border-white dark:hover:bg-white dark:hover:text-black"
+                    key={item.name}
+                    className="flex cursor-default items-center gap-3 rounded-xl border border-black/20 px-4 py-3 text-sm transition duration-300 hover:border-black hover:bg-black hover:text-white motion-safe:hover:-translate-y-1 dark:border-white/30 dark:hover:border-white dark:hover:bg-white dark:hover:text-black"
                   >
-                    {item}
+                    <SkillLogo logos={item.logos} fallback={item.icon} />
+                    <span>{item.name}</span>
                   </li>
                 ))}
               </ul>

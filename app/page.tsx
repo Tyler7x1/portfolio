@@ -1,6 +1,6 @@
 import Link from "next/link";
+import Image from "next/image";
 import FindingsCarousel from "@/components/FindingsCarousel";
-import IntroController from "@/components/IntroController";
 import ExploreMore from "@/components/ExploreMore";
 
 const snippet = [
@@ -15,26 +15,56 @@ const snippet = [
 export default function Home() {
   return (
     <main className="mx-auto max-w-3xl px-6 pb-24 pt-16">
-      <IntroController />
+       <div className="flex justify-center">
+        <Image
+          src="/profile.jpg"
+          alt="Jayprakash Malik"
+          width={176}
+          height={176}
+          priority
+          className="h-40 w-40 rounded-full border border-black/15 object-cover sm:h-44 sm:w-44 dark:border-white/20"
+        />
+      </div>
 
       {/* Intro */}
-      <section>
-        <p className="intro-rest text-sm uppercase tracking-widest text-black/50 dark:text-white/50">
-          Bachelor of Computer Applications Graduate
-        </p>
-        <h1 className="mt-4 text-5xl font-semibold leading-[1.05] tracking-tight sm:text-7xl">
-          <span className="intro-word intro-1 inline-block">Business.</span>{" "}
-          <span className="intro-word intro-2 inline-block">Information Systems.</span>{" "}
+      <section className="mt-10">
+        <h1 className="text-5xl font-semibold leading-[1.05] tracking-tight sm:text-7xl">
+          <span className="intro-word intro-1 inline-block">Hi.</span>{" "}
+          <span className="intro-word intro-2 inline-block">I&apos;m Jay.</span>{" "}
           <span className="intro-word intro-3 inline-block text-black/40 dark:text-white/40">
-            Why not both?
+            Glad you&apos;re here.
           </span>
         </h1>
-        <p className="mt-4 max-w-2xl text-lg leading-relaxed text-black/60 dark:text-white/60">
-          Business is the what: capital, people, decisions. Informatics is how it
-          all stays informed. Put them together and you get the field I&apos;m
-          interested in.
-      </p>
+        <p className="intro-rest mt-6 max-w-2xl text-lg leading-relaxed text-black/60 dark:text-white/60">
+          Business is the what: capital, people, decisions. Informatics is how
+          it all stays informed. Put them together and you get the field
+          I&apos;m interested in.
+        </p>
       </section>
+
+      {/* Resume */}
+      <div className="mt-12 flex justify-center">
+        <a
+          href="/resume.pdf"
+          download="Jayprakash_Malik_Resume.pdf"
+          className="inline-flex items-center gap-3 rounded-full border border-black bg-black px-10 py-4 text-base font-semibold text-white transition duration-300 hover:bg-transparent hover:text-black motion-safe:hover:-translate-y-1 dark:border-white dark:bg-white dark:text-black dark:hover:bg-transparent dark:hover:text-white"
+        >
+          <svg
+            width="22"
+            height="22"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden
+          >
+            <path d="M12 3v12M7 10l5 5 5-5M4 20h16" />
+          </svg>
+          Download Resume
+        </a>
+      </div>
 
       {/* Featured articles */}
       <section className="intro-rest mt-20">
