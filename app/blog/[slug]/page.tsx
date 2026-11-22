@@ -2,6 +2,7 @@ import Link from "next/link";
 import { getPosts, formatDate, getReadingTime } from "@/lib/posts";
 import TableOfContents from "@/components/TableOfContents";
 import ReadingProgress from "@/components/ReadingProgress";
+import ExploreMore from "@/components/ExploreMore";
 
 export const dynamicParams = false;
 
@@ -63,6 +64,9 @@ export default async function Post({
       <article className="prose prose-neutral mt-12 max-w-none dark:prose-invert prose-headings:tracking-tight prose-h2:mt-14">
         <Content />
       </article>
+            <div className="mt-20 border-t border-black/15 pt-12 dark:border-white/20">
+        <ExploreMore />
+      </div>
     </main>
   );
 }

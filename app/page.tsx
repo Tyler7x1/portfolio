@@ -1,6 +1,7 @@
 import Link from "next/link";
 import FindingsCarousel from "@/components/FindingsCarousel";
 import IntroController from "@/components/IntroController";
+import ExploreMore from "@/components/ExploreMore";
 
 const snippet = [
   { text: "elif days < 7:", on: true },
@@ -113,6 +114,9 @@ export default function Home() {
 
         </div>
       </section>
+            <div className="intro-rest mt-20">
+        <ExploreMore />
+      </div>
     </main>
   );
 }
