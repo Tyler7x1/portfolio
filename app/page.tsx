@@ -1,4 +1,5 @@
 import Link from "next/link";
+import IntroController from "@/components/IntroController";
 import FindingsCarousel from "@/components/FindingsCarousel";
 import ExploreMore from "@/components/ExploreMore";
 
@@ -14,6 +15,7 @@ const snippet = [
 export default function Home() {
   return (
     <main className="mx-auto max-w-3xl px-6 pb-24 pt-16">
+      <IntroController />
       {/* Intro */}
       <section className="mt-10">
         <h1 className="text-5xl font-semibold leading-[1.05] tracking-tight sm:text-7xl">
@@ -31,7 +33,7 @@ export default function Home() {
       </section>
 
       {/* Resume */}
-      <div className="mt-12 flex justify-center">
+      <div className="intro-rest mt-12 flex justify-center">
         <a
           href="/resume.pdf"
           download="Jayprakash_Malik_Resume.pdf"
