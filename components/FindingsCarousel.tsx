@@ -50,8 +50,8 @@ const findings = [
   },
 ];
 
-const STEP = 304; // one card (288px) plus the gap (16px)
-const SPEED = 0.045; // pixels per millisecond; lower is slower
+const STEP = 304;
+const SPEED = 0.045;
 
 function Card({ item }: { item: (typeof findings)[number] }) {
   return (
@@ -80,7 +80,6 @@ export default function FindingsCarousel() {
   const timer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const [loop, setLoop] = useState(true);
 
-  // Visitors who prefer reduced motion get a plain scrollable row
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       setLoop(false);

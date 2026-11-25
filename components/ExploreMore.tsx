@@ -5,8 +5,8 @@ import { usePathname } from "next/navigation";
 
 const items = [
   {
-    href: "/demos",
-    label: "Demos",
+    href: "/demo",
+    label: "Demo",
     title: "Try the sales dashboard",
     text: "An interactive dashboard on dummy data. Filter, switch charts and click to drill down.",
   },

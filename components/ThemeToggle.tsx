@@ -12,7 +12,6 @@ export default function ThemeToggle() {
       title="Toggle theme"
       className="flex h-9 w-9 items-center justify-center rounded-full border border-black/20 transition hover:bg-black hover:text-white dark:border-white/30 dark:hover:bg-white dark:hover:text-black"
     >
-      {/* Moon: shown in light mode */}
       <svg
         className="dark:hidden"
         width="18"
@@ -28,7 +27,6 @@ export default function ThemeToggle() {
         <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" />
       </svg>
 
-      {/* Sun: shown in dark mode */}
       <svg
         className="hidden dark:block"
         width="18"
