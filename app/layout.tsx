@@ -6,8 +6,12 @@ import Footer from "@/components/Footer";
 import BackToTop from "@/components/BackToTop";
 
 export const metadata: Metadata = {
-  title: "Jayprakash Malik",
-  description: "My portfolio page",
+  title: {
+    default: "Jayprakash Malik",
+    template: "%s · Jayprakash Malik",
+  },
+  description:
+    "Portfolio, independent research and projects in business informatics and data analytics.",
 };
 
 const introScript = `(function(){try{var last=Number(localStorage.getItem("intro-last-seen"));var play=!last||Date.now()-last>900000;document.documentElement.dataset.intro=play?"play":"done";}catch(e){}})();`;

@@ -145,6 +145,36 @@ function SkillLogo({
   return <SkillIcon name={fallback} />;
 }
 
+const interests = [
+  {
+    title: "Data Analytics",
+    description:
+      "Exploring data to identify patterns, uncover insights, and support informed decision-making.",
+  },
+  {
+    title: "Business Intelligence",
+    description:
+      "Understanding how data can help businesses monitor performance and make strategic decisions.",
+  },
+  {
+    title: "Enterprise Information Systems",
+    description:
+      "Learning how information systems support business operations, workflows, and organizational processes.",
+  },
+  {
+    title: "Database Management",
+    description:
+      "Working with structured data, relational databases, and efficient ways of managing information.",
+  },
+];
+
+const exploring = [
+  "Python for data analysis",
+  "SQL and database querying",
+  "Data visualization and reporting",
+  "Business processes and enterprise systems",
+];
+
 const sectionHeading =
   "text-sm uppercase tracking-widest text-black/50 dark:text-white/50";
 
@@ -155,9 +185,8 @@ export default function About() {
 
       <p className="mt-4 max-w-2xl text-lg leading-relaxed text-black/60 dark:text-white/60">
         I&apos;m a Bachelor of Computer Applications graduate from Presidency
-        University, Bengaluru, preparing to apply for a Master&apos;s degree in
-        Business Informatics abroad. My work so far combines independent
-        research on business operations, Python-based analytics and an interest
+        University, Bengaluru. My work so far combines informal field research
+         on business operations, Python-based analytics and an interest
         in enterprise information systems.
       </p>
 
@@ -180,6 +209,53 @@ export default function About() {
           ))}
         </ol>
       </section>
+
+{/* Areas of Interest */}
+<section className="mt-16">
+  <h2 className={sectionHeading}>Areas of Interest</h2>
+
+  <div className="mt-6 grid gap-x-8 gap-y-6 sm:grid-cols-2">
+    {interests.map((item) => (
+      <div key={item.title}>
+        <h3 className="font-medium tracking-tight">
+          {item.title}
+        </h3>
+
+        <p className="mt-2 text-sm leading-relaxed text-black/55 dark:text-white/55">
+          {item.description}
+        </p>
+      </div>
+    ))}
+  </div>
+</section>
+
+{/* Currently Exploring */}
+<section className="mt-16">
+  <div className="flex items-center gap-2">
+    <h2 className={sectionHeading}>Currently Exploring</h2>
+    <span className="relative flex h-2 w-2">
+      <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-500 opacity-100" />
+      <span className="relative inline-flex h-2 w-2 rounded-full bg-green-500" />
+    </span>
+  </div>
+
+  <p className="mt-4 max-w-2xl text-sm leading-relaxed text-black/60 dark:text-white/60">
+    Always curious and continuously learning. Here are a few
+    areas I'm currently spending time exploring and developing
+    my understanding of.
+  </p>
+
+  <div className="mt-5 flex flex-wrap gap-2">
+    {exploring.map((item) => (
+      <span
+        key={item}
+        className="rounded-lg border border-black/15 px-3 py-2 text-sm text-black/70 transition-colors hover:border-black/50 dark:border-white/20 dark:text-white/70 dark:hover:border-white/50"
+      >
+        {item}
+      </span>
+    ))}
+  </div>
+</section>
 
       {/* Skills */}
       <section className="mt-16">

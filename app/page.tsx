@@ -1,5 +1,4 @@
 import Link from "next/link";
-import Image from "next/image";
 import FindingsCarousel from "@/components/FindingsCarousel";
 import ExploreMore from "@/components/ExploreMore";
 
@@ -15,17 +14,6 @@ const snippet = [
 export default function Home() {
   return (
     <main className="mx-auto max-w-3xl px-6 pb-24 pt-16">
-       <div className="flex justify-center">
-        <Image
-          src="/profile.jpg"
-          alt="Jayprakash Malik"
-          width={176}
-          height={176}
-          priority
-          className="h-40 w-40 rounded-full border border-black/15 object-cover sm:h-44 sm:w-44 dark:border-white/20"
-        />
-      </div>
-
       {/* Intro */}
       <section className="mt-10">
         <h1 className="text-5xl font-semibold leading-[1.05] tracking-tight sm:text-7xl">
