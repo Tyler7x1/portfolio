@@ -1,4 +1,5 @@
 import type { IconType } from "react-icons";
+import Reveal from "@/components/Reveal";
 import * as Fa6 from "react-icons/fa6";
 import * as Si from "react-icons/si";
 
@@ -33,8 +34,6 @@ type IconName =
   | "layout"
   | "braces";
 
-// logos: official logo names to try, in order.
-// icon: the line icon shown if none of those names exists in the package.
 type Skill = { name: string; logos: string[]; icon: IconName };
 
 const skills: { group: string; items: Skill[] }[] = [
@@ -181,107 +180,115 @@ const sectionHeading =
 export default function About() {
   return (
     <main className="mx-auto max-w-3xl px-6 pb-24 pt-16">
-<h1 className="text-4xl font-semibold tracking-tight">About</h1>
+      <h1 className="text-4xl font-semibold tracking-tight">About</h1>
 
       <p className="mt-4 max-w-2xl text-lg leading-relaxed text-black/60 dark:text-white/60">
         I&apos;m a Bachelor of Computer Applications graduate from Presidency
         University, Bengaluru. My work so far combines informal field research
-         on business operations, Python-based analytics and an interest
+        on business operations, Python-based analytics and an interest
         in enterprise information systems.
       </p>
 
       {/* Education */}
-      <section className="mt-16">
-        <h2 className={sectionHeading}>Education</h2>
+      <Reveal>
+        <section className="mt-16">
+          <h2 className={sectionHeading}>Education</h2>
 
-        <ol className="mt-6 border-l border-black/15 dark:border-white/20">
-          {education.map((item) => (
-            <li key={item.title} className="relative pb-10 pl-8 last:pb-0">
-              <span className="absolute -left-[5px] top-2 h-2.5 w-2.5 rounded-full bg-black dark:bg-white" />
-              <p className="text-sm text-black/50 dark:text-white/50">
-                {item.years}
-              </p>
-              <h3 className="mt-1 text-lg font-semibold tracking-tight">
-                {item.title}
-              </h3>
-              <p className="text-black/70 dark:text-white/70">{item.place}</p>
-            </li>
-          ))}
-        </ol>
-      </section>
+          <ol className="mt-6 border-l border-black/15 dark:border-white/20">
+            {education.map((item) => (
+              <li key={item.title} className="relative pb-10 pl-8 last:pb-0">
+                <span className="absolute -left-[5px] top-2 h-2.5 w-2.5 rounded-full bg-black dark:bg-white" />
+                <p className="text-sm text-black/50 dark:text-white/50">
+                  {item.years}
+                </p>
+                <h3 className="mt-1 text-lg font-semibold tracking-tight">
+                  {item.title}
+                </h3>
+                <p className="text-black/70 dark:text-white/70">{item.place}</p>
+              </li>
+            ))}
+          </ol>
+        </section>
+      </Reveal>
 
-{/* Areas of Interest */}
-<section className="mt-16">
-  <h2 className={sectionHeading}>Areas of Interest</h2>
+      {/* Areas of Interest */}
+      <Reveal>
+        <section className="mt-16">
+          <h2 className={sectionHeading}>Areas of Interest</h2>
 
-  <div className="mt-6 grid gap-x-8 gap-y-6 sm:grid-cols-2">
-    {interests.map((item) => (
-      <div key={item.title}>
-        <h3 className="font-medium tracking-tight">
-          {item.title}
-        </h3>
+          <div className="mt-6 grid gap-x-8 gap-y-6 sm:grid-cols-2">
+            {interests.map((item) => (
+              <div key={item.title}>
+                <h3 className="font-medium tracking-tight">
+                  {item.title}
+                </h3>
 
-        <p className="mt-2 text-sm leading-relaxed text-black/55 dark:text-white/55">
-          {item.description}
-        </p>
-      </div>
-    ))}
-  </div>
-</section>
+                <p className="mt-2 text-sm leading-relaxed text-black/55 dark:text-white/55">
+                  {item.description}
+                </p>
+              </div>
+            ))}
+          </div>
+        </section>
+      </Reveal>
 
-{/* Currently Exploring */}
-<section className="mt-16">
-  <div className="flex items-center gap-2">
-    <h2 className={sectionHeading}>What I&apos;m currently learning</h2>
-    <span className="relative flex h-2 w-2">
-      <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-500 opacity-100" />
-      <span className="relative inline-flex h-2 w-2 rounded-full bg-green-500" />
-    </span>
-  </div>
+      {/* Currently Exploring */}
+      <Reveal>
+        <section className="mt-16">
+          <div className="flex items-center gap-2">
+            <h2 className={sectionHeading}>What I&apos;m currently learning</h2>
+            <span className="relative flex h-2 w-2">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-500 opacity-100" />
+              <span className="relative inline-flex h-2 w-2 rounded-full bg-green-500" />
+            </span>
+          </div>
 
-  <p className="mt-4 max-w-2xl text-sm leading-relaxed text-black/60 dark:text-white/60">
-    Always curious and continuously learning. Here are a few
-    areas I&apos;m currently spending time exploring and developing
-    my understanding of.
-  </p>
+          <p className="mt-4 max-w-2xl text-sm leading-relaxed text-black/60 dark:text-white/60">
+            Always curious and continuously learning. Here are a few
+            areas I&apos;m currently spending time exploring and developing
+            my understanding of.
+          </p>
 
-  <div className="mt-5 flex flex-wrap gap-2">
-    {exploring.map((item) => (
-      <span
-        key={item}
-        className="rounded-lg border border-black/15 px-3 py-2 text-sm text-black/70 transition-colors hover:border-black/50 dark:border-white/20 dark:text-white/70 dark:hover:border-white/50"
-      >
-        {item}
-      </span>
-    ))}
-  </div>
-</section>
+          <div className="mt-5 flex flex-wrap gap-2">
+            {exploring.map((item) => (
+              <span
+                key={item}
+                className="rounded-lg border border-black/15 px-3 py-2 text-sm text-black/70 transition-colors hover:border-black/50 dark:border-white/20 dark:text-white/70 dark:hover:border-white/50"
+              >
+                {item}
+              </span>
+            ))}
+          </div>
+        </section>
+      </Reveal>
 
       {/* Skills */}
-      <section className="mt-16">
-        <h2 className={sectionHeading}>Skills</h2>
+      <Reveal>
+        <section className="mt-16">
+          <h2 className={sectionHeading}>Skills</h2>
 
-        <div className="mt-6 space-y-8">
-          {skills.map((group) => (
-            <div key={group.group}>
-              <p className="text-sm text-black/50 dark:text-white/50">
-                {group.group}
-              </p>
-              <ul className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4">
-                {group.items.map((item) => (
-                  <li
-                    key={item.name}
-                    className="flex cursor-default items-center gap-3 rounded-xl border border-black/20 px-4 py-3 text-sm transition duration-300 hover:border-black hover:bg-black hover:text-white motion-safe:hover:-translate-y-1 dark:border-white/30 dark:hover:border-white dark:hover:bg-white dark:hover:text-black"
-                  >
-                    <SkillLogo logos={item.logos} fallback={item.icon} />
-                    <span>{item.name}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
-        </div>
-      </section>
+          <div className="mt-6 space-y-8">
+            {skills.map((group) => (
+              <div key={group.group}>
+                <p className="text-sm text-black/50 dark:text-white/50">
+                  {group.group}
+                </p>
+                <ul className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4">
+                  {group.items.map((item) => (
+                    <li
+                      key={item.name}
+                      className="flex cursor-default items-center gap-3 rounded-xl border border-black/20 px-4 py-3 text-sm transition duration-300 hover:border-black hover:bg-black hover:text-white motion-safe:hover:-translate-y-1 dark:border-white/30 dark:hover:border-white dark:hover:bg-white dark:hover:text-black"
+                    >
+                      <SkillLogo logos={item.logos} fallback={item.icon} />
+                      <span>{item.name}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </section>
+      </Reveal>
     </main>
   );
 }

@@ -130,3 +130,47 @@ html[data-intro="play"] .intro-rest {
     animation-delay: calc(var(--i) * 0.15s);
   }
 }
+
+[data-reveal="hidden"] {
+  opacity: 0;
+  transform: translateY(28px);
+}
+
+[data-reveal="shown"] {
+  transition:
+    opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+
+@keyframes fade-area {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+[data-reveal="shown"] .draw-line {
+  stroke-dasharray: 1;
+  animation: draw-line 1.6s ease-out 0.3s both;
+}
+
+[data-reveal="shown"] .fade-area {
+  animation: fade-area 1s ease-out 1s both;
+}
+
+@keyframes donut-grow {
+  from { stroke-dasharray: 0 100; }
+}
+
+@keyframes legend-in {
+  from { opacity: 0; transform: translateX(10px); }
+}
+
+[data-reveal="shown"] .donut-seg {
+  animation: donut-grow 0.14s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: calc(0.3s + var(--i) * 0.14s);
+}
+
+[data-reveal="shown"] .donut-leg {
+  animation: legend-in 0.5s ease-out both;
+  animation-delay: calc(0.4s + var(--i) * 0.1s);
+}

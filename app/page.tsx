@@ -1,6 +1,8 @@
 import Link from "next/link";
+import DashboardPreview from "@/components/DashboardPreview";
 import IntroController from "@/components/IntroController";
 import FindingsCarousel from "@/components/FindingsCarousel";
+import Reveal from "@/components/Reveal";
 import ExploreMore from "@/components/ExploreMore";
 
 const snippet = [
@@ -26,9 +28,16 @@ export default function Home() {
           </span>
         </h1>
         <p className="intro-rest mt-6 max-w-2xl text-lg leading-relaxed text-black/60 dark:text-white/60">
-          Business is the what: capital, people, decisions. Informatics is how
-          it all stays informed. Put them together and you get the field
-          I&apos;m interested in.
+          I like learning about things I&apos;m curious about, and the more I
+          learn, the more curious I get. I wanna figure out how
+          technology shapes an organization and how businesses actually run.
+        </p>
+        <p className="intro-rest mt-4 max-w-2xl text-lg leading-relaxed text-black/60 dark:text-white/60">
+          <strong className="font-semibold text-black dark:text-white">Business</strong>{" "}
+          is the what: capital, people, decisions.{" "}
+          <strong className="font-semibold text-black dark:text-white">Informatics</strong>{" "}
+          is how it all stays informed. Put them together and that&apos;s the
+          space I wanna work in.
         </p>
       </section>
 
@@ -61,7 +70,7 @@ export default function Home() {
         <h2 className="text-sm uppercase tracking-widest text-black/50 dark:text-white/50">
           Featured articles
         </h2>
-          <div className="mt-4 space-y-6">
+        <div className="mt-4 space-y-6">
           {/* Article */}
           <Link
             href="/blog/python-fundamentals-business-analytics"
@@ -93,11 +102,10 @@ export default function Home() {
                     {snippet.map((line, i) => (
                       <div
                         key={i}
-                        className={`px-4 ${
-                          line.on
-                            ? "bg-black/10 dark:bg-white/20"
-                            : "text-black/40 dark:text-white/40"
-                        }`}
+                        className={`px-4 ${line.on
+                          ? "bg-black/10 dark:bg-white/20"
+                          : "text-black/40 dark:text-white/40"
+                          }`}
                       >
                         {line.text}
                       </div>
@@ -107,7 +115,7 @@ export default function Home() {
               </div>
             </div>
           </Link>
-          </div>
+        </div>
 
         <div className="mt-4 space-y-6">
           <div className="rounded-2xl border border-black/15 p-6 sm:p-8 dark:border-white/20">
@@ -134,8 +142,20 @@ export default function Home() {
 
         </div>
       </section>
-            <div className="intro-rest mt-20">
-        <ExploreMore />
+      <section className="intro-rest mt-20">
+        <h2 className="text-sm uppercase tracking-widest text-black/50 dark:text-white/50">
+          Interactive demo
+        </h2>
+        <div className="mt-4">
+          <Reveal>
+            <DashboardPreview />
+          </Reveal>
+        </div>
+      </section>
+      <div className="intro-rest mt-20">
+        <Reveal>
+          <ExploreMore />
+        </Reveal>
       </div>
     </main>
   );

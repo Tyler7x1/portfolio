@@ -1,4 +1,5 @@
 import ProjectCard, { type Project } from "@/components/ProjectCard";
+import Reveal from "@/components/Reveal"
 
 export const metadata = {
   title: "Projects",
@@ -57,7 +58,9 @@ export default function Projects() {
       <ul className="mt-12 space-y-6">
         {projects.map((project) => (
           <li key={project.title}>
+            <Reveal>
             <ProjectCard project={project} />
+            </Reveal>
           </li>
         ))}
       </ul>
