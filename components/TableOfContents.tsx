@@ -15,14 +15,18 @@ export default function TableOfContents() {
   const [headings, setHeadings] = useState<Heading[]>([]);
 
   useEffect(() => {
-    const found = Array.from(
-      document.querySelectorAll<HTMLHeadingElement>("article h2")
-    ).map((el) => {
-      const text = el.textContent ?? "";
-      if (!el.id) el.id = slugify(text);
-      return { id: el.id, text };
+
+    const frame = requestAnimationFrame(() => {
+      const found = Array.from(
+        document.querySelectorAll<HTMLHeadingElement>("article h2")
+      ).map((el) => {
+        const text = el.textContent ?? "";
+        if (!el.id) el.id = slugify(text);
+        return { id: el.id, text };
+      });
+      setHeadings(found);
     });
-    setHeadings(found);
+    return () => cancelAnimationFrame(frame);
   }, []);
 
   if (headings.length === 0) return null;

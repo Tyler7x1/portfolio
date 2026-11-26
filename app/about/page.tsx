@@ -232,7 +232,7 @@ export default function About() {
 {/* Currently Exploring */}
 <section className="mt-16">
   <div className="flex items-center gap-2">
-    <h2 className={sectionHeading}>Currently Exploring</h2>
+    <h2 className={sectionHeading}>What I&apos;m currently learning</h2>
     <span className="relative flex h-2 w-2">
       <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-500 opacity-100" />
       <span className="relative inline-flex h-2 w-2 rounded-full bg-green-500" />
@@ -241,7 +241,7 @@ export default function About() {
 
   <p className="mt-4 max-w-2xl text-sm leading-relaxed text-black/60 dark:text-white/60">
     Always curious and continuously learning. Here are a few
-    areas I'm currently spending time exploring and developing
+    areas I&apos;m currently spending time exploring and developing
     my understanding of.
   </p>
 

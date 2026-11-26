@@ -18,7 +18,15 @@ export async function generateMetadata({
 }) {
   const { slug } = await params;
   const { metadata } = await import(`@/content/${slug}.mdx`);
-  return { title: metadata.title, description: metadata.description };
+    return {
+    title: metadata.title,
+    description: metadata.description,
+    openGraph: {
+      title: metadata.title,
+      description: metadata.description,
+      type: "article",
+    },
+  };
 }
 
 export default async function Post({

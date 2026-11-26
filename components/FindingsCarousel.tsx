@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useSyncExternalStore } from "react";
 
 const findings = [
   {
@@ -74,17 +74,25 @@ function Card({ item }: { item: (typeof findings)[number] }) {
 const arrowClass =
   "pointer-events-none absolute top-1/2 z-10 hidden h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-black/20 bg-white text-black opacity-0 shadow-sm transition hover:bg-black hover:text-white group-hover:pointer-events-auto group-hover:opacity-100 group-focus-within:pointer-events-auto group-focus-within:opacity-100 sm:flex dark:border-white/30 dark:bg-black dark:text-white dark:hover:bg-white dark:hover:text-black";
 
-export default function FindingsCarousel() {
+const reducedQuery = "(prefers-reduced-motion: reduce)";
+
+function subscribeReduced(onChange: () => void) {
+  const mq = window.matchMedia(reducedQuery);
+  mq.addEventListener("change", onChange);
+  return () => mq.removeEventListener("change", onChange);
+}
+
+  export default function FindingsCarousel() {
   const scroller = useRef<HTMLDivElement>(null);
   const paused = useRef(false);
   const timer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
-  const [loop, setLoop] = useState(true);
 
-  useEffect(() => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      setLoop(false);
-    }
-  }, []);
+  const reduced = useSyncExternalStore(
+    subscribeReduced,
+    () => window.matchMedia(reducedQuery).matches,
+    () => false
+  );
+  const loop = !reduced;
 
   // Automatic scrolling
   useEffect(() => {

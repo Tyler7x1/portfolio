@@ -35,8 +35,8 @@ export default function Home() {
       {/* Resume */}
       <div className="intro-rest mt-12 flex justify-center">
         <a
-          href="/resume.pdf"
-          download="Jayprakash_Malik_Resume.pdf"
+          href="/cv.pdf"
+          download="Jayprakash_Malik_CV.pdf"
           className="inline-flex items-center gap-3 rounded-full border border-black bg-black px-10 py-4 text-base font-semibold text-white transition duration-300 hover:bg-transparent hover:text-black motion-safe:hover:-translate-y-1 dark:border-white dark:bg-white dark:text-black dark:hover:bg-transparent dark:hover:text-white"
         >
           <svg
@@ -52,7 +52,7 @@ export default function Home() {
           >
             <path d="M12 3v12M7 10l5 5 5-5M4 20h16" />
           </svg>
-          Download Resume
+          Download CV
         </a>
       </div>
 
