@@ -3,7 +3,7 @@ import { getPosts } from "@/lib/posts";
 import { SITE_URL } from "@/lib/site";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const pages = ["", "/about", "/projects", "/demos", "/blog"].map((path) => ({
+  const pages = ["", "/about", "/projects", "/demo", "/blog"].map((path) => ({
     url: `${SITE_URL}${path}`,
   }));
 
