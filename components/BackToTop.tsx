@@ -17,12 +17,14 @@ export default function BackToTop() {
 
   return (
     <button
-      onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-      aria-label="Back to top"
-      tabIndex={show ? 0 : -1}
-      className={`fixed bottom-6 right-6 z-50 flex h-11 w-11 items-center justify-center rounded-full border border-black/20 bg-white text-black shadow-sm transition hover:bg-black hover:text-white dark:border-white/30 dark:bg-black dark:text-white dark:hover:bg-white dark:hover:text-black ${
-        show ? "opacity-100" : "pointer-events-none opacity-0"
-      }`}
+      onClick={() =>
+        window.scrollTo({
+          top: 0,
+          behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
+            ? "auto"
+            : "smooth",
+        })
+      }
     >
       <svg
         width="18"

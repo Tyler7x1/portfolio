@@ -3,6 +3,7 @@ import "./globals.css";
 import { SITE_URL } from "@/lib/site";
 import ThemeProvider from "@/components/ThemeProvider";
 import Navbar from "@/components/Navbar";
+import ContactTab from "@/components/ContactTab";
 import Footer from "@/components/Footer";
 import BackToTop from "@/components/BackToTop";
 
@@ -42,6 +43,7 @@ export default function RootLayout({
             <Navbar />
             <div id="main" tabIndex={-1} className="flex-1 outline-none">{children}</div>
             <Footer />
+            <ContactTab />
             <BackToTop />
           </div>
         </ThemeProvider>

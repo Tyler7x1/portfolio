@@ -59,21 +59,21 @@ const icons: Record<string, React.ReactNode> = {
 
 export default function Footer() {
   return (
-    <footer className="mx-auto w-full max-w-3xl border-t border-black/15 px-6 py-6 text-sm text-black/50 dark:border-white/20 dark:text-white/50">
+    <footer id="contact" className="mx-auto w-full max-w-3xl border-t border-black/15 px-6 py-6 text-sm text-black/50 dark:border-white/20 dark:text-white/50">
       <div className="flex flex-col items-center gap-5 text-center sm:flex-row sm:justify-between sm:text-left">
         <div>
           <p>© {new Date().getFullYear()} Jayprakash Malik</p>
         </div>
 
         <ul className="flex gap-3">
-          {contacts.map((item) => (
-            <li key={item.label} className="relative">
+          {contacts.map((item, i) => (
+            <li key={item.label} className="relative" style={{ "--i": i } as React.CSSProperties}>
               <a
                 href={item.href}
                 target={item.label === "Email" ? undefined : "_blank"}
                 rel="noopener noreferrer"
                 aria-label={`${item.label}: ${item.value}`}
-                className="group flex h-10 w-10 items-center justify-center rounded-full border border-black/20 text-black transition hover:bg-black hover:text-white focus-visible:bg-black focus-visible:text-white dark:border-white/30 dark:text-white dark:hover:bg-white dark:hover:text-black dark:focus-visible:bg-white dark:focus-visible:text-black"
+                className="contact-btn group flex h-10 w-10 items-center justify-center rounded-full border border-black/20 text-black transition hover:bg-black hover:text-white focus-visible:bg-black focus-visible:text-white dark:border-white/30 dark:text-white dark:hover:bg-white dark:hover:text-black dark:focus-visible:bg-white dark:focus-visible:text-black"
               >
                 {icons[item.label]}
 

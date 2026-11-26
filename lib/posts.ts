@@ -7,6 +7,7 @@ export type PostMeta = {
   subtitle?: string;
   description: string;
   date: string;
+  category?: string;
 };
 
 export async function getPosts(): Promise<PostMeta[]> {

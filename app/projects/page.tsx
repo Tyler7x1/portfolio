@@ -1,5 +1,10 @@
 import ProjectCard, { type Project } from "@/components/ProjectCard";
 
+export const metadata = {
+  title: "Projects",
+  description: "Independent research, a capstone project and a Python analytics project.",
+};
+
 const projects: Project[] = [
   {
     type: "Data analytics project",

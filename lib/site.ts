@@ -5,5 +5,5 @@ export const SITE_URL =
   (vercel
     ? `https://${vercel}`
     : process.env.NODE_ENV === "production"
-      ? "https://portfolio-beta-mocha-20.vercel.app"
+      ? "https://jaypfolio.vercel.app"
       : "http://localhost:3000");

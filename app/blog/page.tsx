@@ -1,6 +1,11 @@
 import Link from "next/link";
 import { getPosts, formatDate } from "@/lib/posts";
 
+export const metadata = {
+  title: "Blog",
+  description: "Articles on independent research, business informatics and data analytics.",
+};
+
 export default async function Blog() {
   const posts = await getPosts();
 

@@ -32,6 +32,7 @@ export default function Navbar() {
               <Link
                 key={link.href}
                 href={link.href}
+                aria-current={active ? "page" : undefined}
                 className={
                   active
                     ? "underline underline-offset-4"

@@ -46,7 +46,7 @@ app/            Pages: home, about, projects, demos, blog, plus SEO files
 components/     Navbar, footer, theme toggle, dashboard, article components
 content/        Articles written in MDX
 lib/            Article helpers, dashboard data generator, site settings
-public/         Photo, resume and static files
+public/         CV, project GIF and static files
 ```
 
 ## Adding content

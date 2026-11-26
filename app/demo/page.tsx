@@ -1,7 +1,8 @@
 import SalesDashboard from "@/components/SalesDashboard";
 
 export const metadata = {
-  title: "Demos",
+  title: "Demo",
+  description: "An interactive sales dashboard built on synthetic data.",
 };
 
 export default function Demos() {

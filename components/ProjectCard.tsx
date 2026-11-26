@@ -50,9 +50,8 @@ export default function ProjectCard({ project }: { project: Project }) {
       onPointerDown={(e) => (pointerType.current = e.pointerType)}
       onKeyDown={() => (pointerType.current = "mouse")}
       onClick={onClick}
-      className={`group relative block overflow-hidden rounded-2xl border border-black/15 transition hover:border-black dark:border-white/20 dark:hover:border-white ${
-        project.image ? "h-96" : ""
-      }`}
+      className={`group relative block overflow-hidden rounded-2xl border border-black/15 transition hover:border-black dark:border-white/20 dark:hover:border-white ${project.image ? "h-96" : ""
+        }`}
     >
       {project.image && (
         <>
@@ -60,14 +59,14 @@ export default function ProjectCard({ project }: { project: Project }) {
           <img
             src={project.image}
             alt={`${project.title} demo`}
-            className="absolute inset-0 h-full w-full object-cover"
+            className="absolute inset-0 h-full w-full object-cover" loading="lazy"
+            decoding="async"
           />
 
           <span
             aria-hidden
-            className={`absolute bottom-4 right-4 rounded-full bg-black/75 px-3 py-1.5 text-xs font-medium text-white backdrop-blur transition duration-300 group-hover:opacity-0 group-focus-visible:opacity-0 ${
-              revealed ? "opacity-0" : "opacity-100"
-            }`}
+            className={`absolute bottom-4 right-4 rounded-full bg-black/75 px-3 py-1.5 text-xs font-medium text-white backdrop-blur transition duration-300 group-hover:opacity-0 group-focus-visible:opacity-0 ${revealed ? "opacity-0" : "opacity-100"
+              }`}
           >
             <span className="[@media(pointer:coarse)]:hidden">
               Hover for details
@@ -82,9 +81,8 @@ export default function ProjectCard({ project }: { project: Project }) {
       <div
         className={
           project.image
-            ? `absolute inset-0 overflow-y-auto bg-white/95 p-8 transition duration-300 group-hover:opacity-100 group-focus-visible:opacity-100 dark:bg-black/95 ${
-                revealed ? "opacity-100" : "opacity-0"
-              }`
+            ? `absolute inset-0 overflow-y-auto bg-white/95 p-8 transition duration-300 group-hover:opacity-100 group-focus-visible:opacity-100 dark:bg-black/95 ${revealed ? "opacity-100" : "opacity-0"
+            }`
             : "p-8"
         }
       >

@@ -3,8 +3,10 @@
 @custom-variant dark (&:where(.dark, .dark *));
 @plugin "@tailwindcss/typography";
 
-html {
-  scroll-behavior: smooth;
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
 }
 
 article h2 {
@@ -93,5 +95,38 @@ html[data-intro="play"] .intro-rest {
   button:not(:disabled),
   [role="button"]:not(:disabled) {
     cursor: pointer;
+  }
+}
+
+@keyframes contact-pop {
+  0% { transform: scale(1); }
+  30% { transform: translateY(-10px) scale(1.2); }
+  60% { transform: translateY(0) scale(0.95); }
+  100% { transform: scale(1); }
+}
+
+@keyframes contact-ring {
+  0% { box-shadow: 0 0 0 0 rgb(0 0 0 / 0.35); }
+  100% { box-shadow: 0 0 0 14px rgb(0 0 0 / 0); }
+}
+
+@keyframes contact-ring-dark {
+  0% { box-shadow: 0 0 0 0 rgb(255 255 255 / 0.45); }
+  100% { box-shadow: 0 0 0 14px rgb(255 255 255 / 0); }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  #contact[data-pulse="on"] .contact-btn {
+    animation:
+      contact-pop 0.7s ease-out both,
+      contact-ring 1s ease-out both;
+    animation-delay: calc(var(--i) * 0.15s);
+  }
+
+  .dark #contact[data-pulse="on"] .contact-btn {
+    animation:
+      contact-pop 0.7s ease-out both,
+      contact-ring-dark 1s ease-out both;
+    animation-delay: calc(var(--i) * 0.15s);
   }
 }
