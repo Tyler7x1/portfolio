@@ -37,10 +37,11 @@ export default function DashboardPreview() {
   });
 
   return (
-    <Link
-      href="/demo"
-      className="group block rounded-2xl border border-black/15 p-6 transition duration-300 hover:-translate-y-1 hover:border-black sm:p-8 dark:border-white/20 dark:hover:border-white"
-    >
+    // The card is not one big link: a toggle or a 3D canvas inside an <a>
+    // is invalid HTML and fights with the link. Instead the "Try the
+    // dashboard" link is stretched over the card (after:inset-0), and the
+    // chart sits above it (z-10) so it stays interactive.
+    <div className="group relative rounded-2xl border border-black/15 p-6 transition duration-300 hover:-translate-y-1 hover:border-black sm:p-8 dark:border-white/20 dark:hover:border-white">
       <h3 className="text-2xl font-semibold tracking-tight">Sales dashboard</h3>
       <p className="mt-1 italic text-black/60 dark:text-white/60">
         Filter, switch charts and drill down, all on synthetic data
@@ -61,9 +62,15 @@ export default function DashboardPreview() {
       <p className="mt-2 text-xs text-black/50 dark:text-white/50">
         Dummy data for a fictional electronics retailer.
       </p>
-      <span className="mt-3 inline-block text-sm font-medium transition group-hover:translate-x-1">
-        Try the dashboard →
-      </span>
-    </Link>
+
+      <Link
+        href="/demo"
+        className="mt-3 inline-block text-sm font-medium after:absolute after:inset-0 after:content-['']"
+      >
+        <span className="inline-block transition group-hover:translate-x-1">
+          Try the dashboard →
+        </span>
+      </Link>
+    </div>
   );
 }
