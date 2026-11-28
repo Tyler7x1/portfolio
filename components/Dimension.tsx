@@ -1,12 +1,13 @@
 "use client";
 
 import { createContext, useContext, useState } from "react";
+import { preload3D } from "@/components/three/preload";
 
 export type Dim = "2d" | "3d";
 
 const DimContext = createContext<{ dim: Dim; setDim: (d: Dim) => void }>({
   dim: "2d",
-  setDim: () => {},
+  setDim: () => { },
 });
 
 // Lets a toggle and a chart share one 2D/3D state, even when the
@@ -33,6 +34,9 @@ export function DimToggle({
     <div
       role="group"
       aria-label="Chart dimension"
+      onPointerEnter={preload3D}
+      onPointerDown={preload3D}
+      onFocus={preload3D}
       className="inline-flex rounded-full border border-black/20 p-0.5 text-xs dark:border-white/30"
     >
       {(["2d", "3d"] as const).map((d) => {
@@ -43,11 +47,10 @@ export function DimToggle({
             type="button"
             aria-pressed={on}
             onClick={() => onChange(d)}
-            className={`rounded-full px-3 py-1 transition ${
-              on
+            className={`rounded-full px-3 py-1 transition ${on
                 ? "bg-black text-white dark:bg-white dark:text-black"
                 : "text-black/60 hover:text-black dark:text-white/60 dark:hover:text-white"
-            }`}
+              }`}
           >
             {d.toUpperCase()}
           </button>

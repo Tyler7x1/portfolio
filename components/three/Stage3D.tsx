@@ -45,12 +45,26 @@ function shade(o: number, dark: boolean) {
 /* ------------------------------------------------------------------
    2D to 3D: the camera stays fixed, looking straight down. The chart
    itself tilts (and its shapes rise), so it turns from flat into 3D.
+   Dragging adds a spin and a tilt on top of that default angle.
 ------------------------------------------------------------------- */
 const VIEW = {
   donut: { tilt: 0.93, yaw: 0, zoom: 1.0 },
   bars: { tilt: 0.98, yaw: -0.5, zoom: 1.2 },
   heat: { tilt: 0.87, yaw: -0.42, zoom: 1.25 },
 } as const;
+
+const PITCH_MIN = 0.3; // never fully flat while dragging
+const PITCH_MAX = 1.38; // never fully edge-on
+
+function clampSpin(kind: SceneSpec["kind"], v: number) {
+  // the donut can spin all the way round, wide charts stay readable
+  return kind === "donut" ? v : THREE.MathUtils.clamp(v, -1, 1);
+}
+
+function clampPitch(kind: SceneSpec["kind"], v: number) {
+  const base = VIEW[kind].tilt;
+  return THREE.MathUtils.clamp(v, PITCH_MIN - base, PITCH_MAX - base);
+}
 
 function Tilt({
   kind,
@@ -68,8 +82,22 @@ function Tilt({
   const lift = useRef<THREE.Group>(null);
   const tilt = useRef<THREE.Group>(null);
   const s = useRef(0);
-  const reported = useRef(true);
+  const flatReported = useRef(false);
   const reduced = useRef(false);
+  const targetRef = useRef(target);
+  // spin/pitch: what is drawn. goal*: where the drag points.
+  // v*: glide speed after letting go.
+  const rot = useRef({
+    spin: 0,
+    pitch: 0,
+    goalSpin: 0,
+    goalPitch: 0,
+    vSpin: 0,
+    vPitch: 0,
+    down: false,
+  });
+  const get = useThree((st) => st.get);
+  const invalidate = useThree((st) => st.invalidate);
 
   useEffect(() => {
     reduced.current = window.matchMedia(
@@ -77,15 +105,148 @@ function Tilt({
     ).matches;
   }, []);
 
-  useFrame(({ camera, size }, dt) => {
-    s.current = reduced.current
-      ? target
-      : THREE.MathUtils.damp(s.current, target, 4, Math.min(dt, 0.05));
+  // Every change of target restarts the animation, even if the canvas is idle
+  useEffect(() => {
+    targetRef.current = target;
+    flatReported.current = false;
+    get().gl.domElement.style.cursor = target === 1 ? "grab" : "";
+    invalidate();
+  }, [target, get, invalidate]);
+
+  // Drag to rotate (mouse, pen and touch)
+  useEffect(() => {
+    const el = get().gl.domElement;
+    const r = rot.current;
+    let id = -1;
+    let lastX = 0;
+    let lastY = 0;
+    let lastT = 0;
+
+    const hoverCursor = () =>
+      targetRef.current === 1
+        ? document.body.style.cursor === "pointer"
+          ? "pointer"
+          : "grab"
+        : "";
+
+    const onMove = (e: PointerEvent) => {
+      if (e.pointerId !== id) return;
+      const now = performance.now();
+      const dt = Math.max(1, now - lastT) / 1000;
+      const dSpin = (e.clientX - lastX) * 0.008;
+      // touch only spins, so the page can still scroll vertically
+      const dPitch =
+        e.pointerType === "touch" ? 0 : -(e.clientY - lastY) * 0.006;
+      lastX = e.clientX;
+      lastY = e.clientY;
+      lastT = now;
+
+      r.goalSpin = clampSpin(kind, r.goalSpin + dSpin);
+      r.goalPitch = clampPitch(kind, r.goalPitch + dPitch);
+      // remember how fast the pointer moved, for the glide
+      r.vSpin = THREE.MathUtils.clamp(0.5 * r.vSpin + 0.5 * (dSpin / dt), -8, 8);
+      r.vPitch = THREE.MathUtils.clamp(
+        0.5 * r.vPitch + 0.5 * (dPitch / dt),
+        -6,
+        6
+      );
+      invalidate();
+    };
+
+    const end = (e: PointerEvent) => {
+      if (e.pointerId !== id) return;
+      id = -1;
+      r.down = false;
+      // paused before letting go: no glide
+      if (performance.now() - lastT > 90) {
+        r.vSpin = 0;
+        r.vPitch = 0;
+      }
+      el.style.cursor = hoverCursor();
+      window.removeEventListener("pointermove", onMove);
+      window.removeEventListener("pointerup", end);
+      window.removeEventListener("pointercancel", end);
+      invalidate();
+    };
+
+    const onDown = (e: PointerEvent) => {
+      if (targetRef.current !== 1 || id !== -1) return;
+      if (e.pointerType === "mouse" && e.button !== 0) return;
+      id = e.pointerId;
+      lastX = e.clientX;
+      lastY = e.clientY;
+      lastT = performance.now();
+      r.down = true;
+      r.vSpin = 0;
+      r.vPitch = 0;
+      el.style.cursor = "grabbing";
+      window.addEventListener("pointermove", onMove);
+      window.addEventListener("pointerup", end);
+      window.addEventListener("pointercancel", end);
+      invalidate();
+    };
+
+    const onHover = () => {
+      if (id === -1) el.style.cursor = hoverCursor();
+    };
+
+    // double-click puts the chart back to its default angle
+    const onReset = () => {
+      r.goalSpin = 0;
+      r.goalPitch = 0;
+      r.vSpin = 0;
+      r.vPitch = 0;
+      invalidate();
+    };
+
+    el.addEventListener("pointerdown", onDown);
+    el.addEventListener("pointermove", onHover);
+    el.addEventListener("dblclick", onReset);
+    return () => {
+      el.removeEventListener("pointerdown", onDown);
+      el.removeEventListener("pointermove", onHover);
+      el.removeEventListener("dblclick", onReset);
+      window.removeEventListener("pointermove", onMove);
+      window.removeEventListener("pointerup", end);
+      window.removeEventListener("pointercancel", end);
+    };
+  }, [kind, get, invalidate]);
+
+  useFrame(({ camera, size, invalidate: again }, dt) => {
+    const step = Math.min(dt, 0.05);
+    const r = rot.current;
+    const cfg = VIEW[kind];
+
+    if (reduced.current) {
+      s.current = target;
+    } else {
+      s.current = THREE.MathUtils.damp(s.current, target, 6, step);
+      if (Math.abs(s.current - target) < 0.0008) s.current = target;
+    }
     const x = THREE.MathUtils.clamp(s.current, 0, 1);
     const k = x * x * (3 - 2 * x); // smoothstep
     camera.userData.phase = k; // the shapes read this to rise
 
-    const cfg = VIEW[kind];
+    // After letting go, the chart glides to a stop
+    if (!r.down && (r.vSpin !== 0 || r.vPitch !== 0)) {
+      r.goalSpin = clampSpin(kind, r.goalSpin + r.vSpin * step);
+      r.goalPitch = clampPitch(kind, r.goalPitch + r.vPitch * step);
+      const decay = Math.exp(-4 * step);
+      r.vSpin *= decay;
+      r.vPitch *= decay;
+      if (Math.abs(r.vSpin) < 0.02) r.vSpin = 0;
+      if (Math.abs(r.vPitch) < 0.02) r.vPitch = 0;
+    }
+    r.spin = THREE.MathUtils.damp(r.spin, r.goalSpin, 14, step);
+    r.pitch = THREE.MathUtils.damp(r.pitch, r.goalPitch, 14, step);
+    if (Math.abs(r.spin - r.goalSpin) < 0.0004) r.spin = r.goalSpin;
+    if (Math.abs(r.pitch - r.goalPitch) < 0.0004) r.pitch = r.goalPitch;
+
+    // Back to flat: forget the drag, and tell the parent it can show the 2D chart
+    const isFlat = target === 0 && k < 0.002;
+    if (isFlat) {
+      r.spin = r.pitch = r.goalSpin = r.goalPitch = r.vSpin = r.vPitch = 0;
+    }
 
     // Fixed camera, straight above the chart. Narrow screens get a little
     // more room for the tilted scene.
@@ -104,16 +265,28 @@ function Tilt({
     const offY = Math.max(0, (size.height - flatH) / 2);
     if (lift.current) lift.current.position.z = -offY * (1 - k);
 
-    if (tilt.current) tilt.current.rotation.set(-k * cfg.tilt, -k * cfg.yaw, 0);
-
-    if (target === 0 && s.current < 0.004) {
-      if (!reported.current) {
-        reported.current = true;
-        onFlat();
-      }
-    } else if (target === 1) {
-      reported.current = false;
+    if (tilt.current) {
+      tilt.current.rotation.set(
+        -k * (cfg.tilt + r.pitch),
+        -k * cfg.yaw + k * r.spin,
+        0
+      );
     }
+
+    if (isFlat && !flatReported.current) {
+      flatReported.current = true;
+      onFlat();
+    }
+
+    // The canvas only draws while something is moving
+    const moving =
+      s.current !== target ||
+      r.down ||
+      r.vSpin !== 0 ||
+      r.vPitch !== 0 ||
+      r.spin !== r.goalSpin ||
+      r.pitch !== r.goalPitch;
+    if (moving) again();
   });
 
   return (
@@ -232,10 +405,18 @@ function Segment({
 
   useEffect(() => () => geometry.dispose(), [geometry]);
 
-  useFrame(({ camera }, dt) => {
+  useFrame(({ camera, invalidate }, dt) => {
     const m = mesh.current;
     if (!m) return;
-    lift.current = THREE.MathUtils.damp(lift.current, isActive ? 6 : 0, 10, dt);
+    const goal = isActive ? 6 : 0;
+    lift.current = THREE.MathUtils.damp(
+      lift.current,
+      goal,
+      10,
+      Math.min(dt, 0.05)
+    );
+    if (Math.abs(lift.current - goal) < 0.01) lift.current = goal;
+    else invalidate();
     m.scale.z = Math.max(
       0.05,
       (6 + item.h * 30 + lift.current) * phaseOf(camera)
@@ -258,6 +439,7 @@ function Segment({
       }}
       onClick={(ev) => {
         ev.stopPropagation();
+        if (ev.delta > 5) return; // that was a drag, not a click
         spec.onSelect?.(item.key);
       }}
     >
@@ -331,6 +513,7 @@ function Bar({
           ref={mesh}
           onClick={(ev) => {
             ev.stopPropagation();
+            if (ev.delta > 5) return;
             onSelect(item.key);
           }}
         >
@@ -343,7 +526,10 @@ function Bar({
       {/* whole row is clickable */}
       <mesh
         position={[0, 0.5, 0]}
-        onClick={() => onSelect(item.key)}
+        onClick={(ev) => {
+          if (ev.delta > 5) return;
+          onSelect(item.key);
+        }}
         onPointerOver={() => setRowHover(true)}
         onPointerOut={() => setRowHover(false)}
       >
@@ -448,6 +634,7 @@ function Tower({
         ref={mesh}
         onClick={(ev) => {
           ev.stopPropagation();
+          if (ev.delta > 5) return;
           onPick(cell.r, cell.c);
         }}
         onPointerOver={() => setHover(true)}
@@ -541,7 +728,6 @@ export type StageProps = {
   spec: SceneSpec;
   dark: boolean;
   target: 0 | 1;
-  active: boolean;
   flatRef: { current: HTMLElement | null };
   onReady: () => void;
   onFlat: () => void;
@@ -551,7 +737,6 @@ export default function Stage3D({
   spec,
   dark,
   target,
-  active,
   flatRef,
   onReady,
   onFlat,
@@ -560,7 +745,8 @@ export default function Stage3D({
     <Canvas
       flat
       dpr={[1, 2]}
-      frameloop={active ? "always" : "never"}
+      frameloop="demand"
+      style={{ touchAction: "pan-y", userSelect: "none" }}
       camera={{ fov: FOV, near: 1, far: 8000, position: [0, 1000, 0.01] }}
       gl={{ antialias: true, alpha: true }}
       onCreated={() => onReady()}
