@@ -593,8 +593,8 @@ export default function SalesDashboard() {
   const [breakdown, setBreakdown] = useState<"category" | "region">("category");
   const [trendType, setTrendType] = useState<TrendType>("line");
   const [view, setView] = useState<View>("bars");
-  const [dim, setDim] = useState<Dim>("2d");
-
+  const [chartDim, setChartDim] = useState<Dim>("2d"); // bars and donut
+  const [heatDim, setHeatDim] = useState<Dim>("2d"); // heatmap
   const filtersActive = region !== "All" || category !== "All";
 
   // Monthly totals for the current region and category filters
@@ -831,7 +831,7 @@ export default function SalesDashboard() {
                 Dimension
               </p>
               <div className="mt-2">
-                <DimToggle value={dim} onChange={setDim} />
+                <DimToggle value={chartDim} onChange={setChartDim} />
               </div>
             </div>
           </div>
@@ -839,7 +839,7 @@ export default function SalesDashboard() {
 
         {view === "bars" ? (
           <View3D
-            dim={dim}
+            dim={chartDim}
             className="mt-6"
             minHeight3d={240 + bars.length * 18}
             spec={{
@@ -896,7 +896,7 @@ export default function SalesDashboard() {
               selected={selected}
               metric={metric}
               onSelect={toggle}
-              dim={dim}
+              dim={chartDim}
             />
           </div>
         )}
@@ -913,7 +913,7 @@ export default function SalesDashboard() {
           <h3 className="text-xs font-medium uppercase tracking-widest text-black/50 dark:text-white/50">
             {metricLabel[metric]} by region and category
           </h3>
-          <DimToggle value={dim} onChange={setDim} />
+          <DimToggle value={heatDim} onChange={setHeatDim} />
         </div>
         <div className="mt-6">
           <Heatmap
@@ -922,7 +922,7 @@ export default function SalesDashboard() {
             region={region}
             category={category}
             onPick={pickCell}
-            dim={dim}
+            dim={heatDim}
           />
         </div>
         <p className="mt-4 text-xs text-black/50 dark:text-white/50">

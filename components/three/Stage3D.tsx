@@ -6,9 +6,11 @@ import {
   useEffect,
   useMemo,
   useRef,
+  useState,
+  type ReactNode,
 } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { Edges, Html } from "@react-three/drei";
+import { Edges, useCursor } from "@react-three/drei";
 import * as THREE from "three";
 import type {
   BarsSpec,
@@ -20,13 +22,18 @@ import type {
 const FOV = 30;
 const EDGE = "#8a8a8a";
 
-type Anim = { e: { current: number }; dark: boolean };
-const AnimContext = createContext<Anim | null>(null);
+const DarkContext = createContext(false);
 
-function useAnim() {
-  const v = useContext(AnimContext);
-  if (!v) throw new Error("useAnim must be used inside Stage3D");
-  return v;
+function useDark() {
+  return useContext(DarkContext);
+}
+
+// Tilt writes the 2D to 3D progress (0 to 1) onto the camera, and every
+// shape reads it from there. This avoids sharing a mutable value through
+// context, which React's lint rules reject.
+function phaseOf(camera: { userData: Record<string, unknown> }) {
+  const p = camera.userData.phase;
+  return typeof p === "number" ? p : 0;
 }
 
 // Greys that match the site's black and white look
@@ -36,74 +43,68 @@ function shade(o: number, dark: boolean) {
 }
 
 /* ------------------------------------------------------------------
-   Camera: top-down (looks like the flat 2D chart) to tilted (3D)
+   2D to 3D: the camera stays fixed, looking straight down. The chart
+   itself tilts (and its shapes rise), so it turns from flat into 3D.
 ------------------------------------------------------------------- */
-const CAMERA = {
+const VIEW = {
   donut: { tilt: 0.93, yaw: 0, zoom: 1.0 },
   bars: { tilt: 0.98, yaw: -0.5, zoom: 1.2 },
   heat: { tilt: 0.87, yaw: -0.42, zoom: 1.25 },
 } as const;
 
-function Rig({
+function Tilt({
   kind,
   target,
   flatRef,
   onFlat,
+  children,
 }: {
   kind: SceneSpec["kind"];
   target: 0 | 1;
   flatRef: { current: HTMLElement | null };
   onFlat: () => void;
+  children: ReactNode;
 }) {
-  const { e } = useAnim();
+  const lift = useRef<THREE.Group>(null);
+  const tilt = useRef<THREE.Group>(null);
   const s = useRef(0);
   const reported = useRef(true);
-  const reduced = useMemo(
-    () => window.matchMedia("(prefers-reduced-motion: reduce)").matches,
-    []
-  );
+  const reduced = useRef(false);
 
-  useFrame(({ camera, size, pointer }, dt) => {
-    s.current = reduced
+  useEffect(() => {
+    reduced.current = window.matchMedia(
+      "(prefers-reduced-motion: reduce)"
+    ).matches;
+  }, []);
+
+  useFrame(({ camera, size }, dt) => {
+    s.current = reduced.current
       ? target
       : THREE.MathUtils.damp(s.current, target, 4, Math.min(dt, 0.05));
     const x = THREE.MathUtils.clamp(s.current, 0, 1);
     const k = x * x * (3 - 2 * x); // smoothstep
-    e.current = k;
+    camera.userData.phase = k; // the shapes read this to rise
 
-    const cfg = CAMERA[kind];
-    const phi = k * cfg.tilt;
-    const az = k * cfg.yaw + pointer.x * 0.1 * k; // small mouse parallax
-    const sp = Math.sin(phi);
-    const cp = Math.cos(phi);
-    const sa = Math.sin(az);
-    const ca = Math.cos(az);
+    const cfg = VIEW[kind];
 
-    // Narrow screens need a bit more room for the rotated scene
+    // Fixed camera, straight above the chart. Narrow screens get a little
+    // more room for the tilted scene.
     const narrow = kind !== "donut" && size.width < 520 ? 1.35 : 1;
     const zoom = cfg.zoom * narrow;
-
-    // The donut is drawn in SVG units (200 high), the rest in pixels
-    const high = kind === "donut" ? 200 : size.height;
+    const high = kind === "donut" ? 200 : size.height; // donut is in SVG units
     const D =
       (high / 2 / Math.tan(THREE.MathUtils.degToRad(FOV / 2))) *
       (1 + (zoom - 1) * k);
-
-    camera.position.set(D * sp * sa, D * cp, D * sp * ca);
-    camera.up.set(-sa * cp, sp, -ca * cp);
+    camera.position.set(0, D, 0);
+    camera.up.set(0, 0, -1);
     camera.lookAt(0, 0, 0);
 
-    // While flat, keep the scene aligned with the top of the 2D chart
+    // While flat, keep the chart aligned with the top of the 2D version
     const flatH = flatRef.current?.offsetHeight ?? size.height;
-    const offY = Math.max(0, (size.height - flatH) / 2) * (1 - k);
-    (camera as THREE.PerspectiveCamera).setViewOffset(
-      size.width,
-      size.height,
-      0,
-      offY,
-      size.width,
-      size.height
-    );
+    const offY = Math.max(0, (size.height - flatH) / 2);
+    if (lift.current) lift.current.position.z = -offY * (1 - k);
+
+    if (tilt.current) tilt.current.rotation.set(-k * cfg.tilt, -k * cfg.yaw, 0);
 
     if (target === 0 && s.current < 0.004) {
       if (!reported.current) {
@@ -115,7 +116,85 @@ function Rig({
     }
   });
 
-  return null;
+  return (
+    <group ref={lift}>
+      <group ref={tilt}>{children}</group>
+    </group>
+  );
+}
+
+/* ------------------------------------------------------------------
+   Text labels, drawn into the scene as sprites. (drei's Html creates a
+   separate React root per label, which triggers React's "synchronously
+   unmount a root" warning, so it is not used here.)
+------------------------------------------------------------------- */
+function Label({
+  text,
+  position,
+  anchor = "left",
+  color,
+  size = 14,
+  mono = false,
+}: {
+  text: string;
+  position: [number, number, number];
+  anchor?: "left" | "center" | "right";
+  color: string;
+  size?: number;
+  mono?: boolean;
+}) {
+  const made = useMemo(() => {
+    const family = mono
+      ? "ui-monospace, SFMono-Regular, Menlo, monospace"
+      : getComputedStyle(document.body).fontFamily || "system-ui, sans-serif";
+    const font = `${size}px ${family}`;
+
+    const probe = document.createElement("canvas").getContext("2d");
+    if (!probe) return null;
+    probe.font = font;
+
+    const w = Math.ceil(probe.measureText(text).width) + 4;
+    const h = Math.ceil(size * 1.4);
+    const scale = Math.min(window.devicePixelRatio || 1, 2) * 2; // keep text sharp
+
+    const canvas = document.createElement("canvas");
+    canvas.width = w * scale;
+    canvas.height = h * scale;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return null;
+    ctx.scale(scale, scale);
+    ctx.font = font;
+    ctx.textBaseline = "middle";
+    ctx.fillStyle = color;
+    ctx.fillText(text, 2, h / 2);
+
+    const texture = new THREE.CanvasTexture(canvas);
+    texture.colorSpace = THREE.SRGBColorSpace;
+    return { texture, w, h };
+  }, [text, color, size, mono]);
+
+  useEffect(() => {
+    return () => made?.texture.dispose();
+  }, [made]);
+
+  if (!made) return null;
+  const cx = anchor === "left" ? 0 : anchor === "right" ? 1 : 0.5;
+
+  return (
+    <sprite
+      position={position}
+      scale={[made.w, made.h, 1]}
+      center={[cx, 0.5]}
+      renderOrder={10}
+    >
+      <spriteMaterial
+        map={made.texture}
+        transparent
+        depthTest={false}
+        toneMapped={false}
+      />
+    </sprite>
+  );
 }
 
 /* ------------------------------------------------------------------
@@ -128,9 +207,11 @@ function Segment({
   item: DonutSpec["items"][number];
   spec: DonutSpec;
 }) {
-  const { e, dark } = useAnim();
-  const mesh = useRef<THREE.Mesh>(null!);
+  const dark = useDark();
+  const mesh = useRef<THREE.Mesh>(null);
   const lift = useRef(0);
+  const [hovered, setHovered] = useState(false);
+  useCursor(hovered && !!spec.onSelect);
   const isActive = spec.activeKey === item.key;
   const dimmed = spec.activeKey !== null && !isActive;
 
@@ -151,11 +232,13 @@ function Segment({
 
   useEffect(() => () => geometry.dispose(), [geometry]);
 
-  useFrame((_, dt) => {
+  useFrame(({ camera }, dt) => {
+    const m = mesh.current;
+    if (!m) return;
     lift.current = THREE.MathUtils.damp(lift.current, isActive ? 6 : 0, 10, dt);
-    mesh.current.scale.z = Math.max(
+    m.scale.z = Math.max(
       0.05,
-      (6 + item.h * 30 + lift.current) * e.current
+      (6 + item.h * 30 + lift.current) * phaseOf(camera)
     );
   });
 
@@ -166,12 +249,12 @@ function Segment({
       rotation={[-Math.PI / 2, 0, 0]}
       onPointerOver={(ev) => {
         ev.stopPropagation();
+        setHovered(true);
         spec.onHover?.(item.key);
-        document.body.style.cursor = spec.onSelect ? "pointer" : "auto";
       }}
       onPointerOut={() => {
+        setHovered(false);
         spec.onHover?.(null);
-        document.body.style.cursor = "auto";
       }}
       onClick={(ev) => {
         ev.stopPropagation();
@@ -185,7 +268,7 @@ function Segment({
 }
 
 function DonutScene({ spec }: { spec: DonutSpec }) {
-  const { dark } = useAnim();
+  const dark = useDark();
   return (
     <group>
       {spec.track && (
@@ -219,15 +302,19 @@ function Bar({
   z: number;
   onSelect: (key: string) => void;
 }) {
-  const { e, dark } = useAnim();
-  const mesh = useRef<THREE.Mesh>(null!);
+  const dark = useDark();
+  const mesh = useRef<THREE.Mesh>(null);
+  const [rowHover, setRowHover] = useState(false);
+  useCursor(rowHover);
   const len = Math.max(2, item.n * trackW);
   const H = 18 + item.n * 84;
 
-  useFrame(() => {
-    const h = Math.max(0.05, H * e.current);
-    mesh.current.scale.y = h;
-    mesh.current.position.y = h / 2;
+  useFrame(({ camera }) => {
+    const m = mesh.current;
+    if (!m) return;
+    const h = Math.max(0.05, H * phaseOf(camera));
+    m.scale.y = h;
+    m.position.y = h / 2;
   });
 
   return (
@@ -257,23 +344,28 @@ function Bar({
       <mesh
         position={[0, 0.5, 0]}
         onClick={() => onSelect(item.key)}
-        onPointerOver={() => (document.body.style.cursor = "pointer")}
-        onPointerOut={() => (document.body.style.cursor = "auto")}
+        onPointerOver={() => setRowHover(true)}
+        onPointerOut={() => setRowHover(false)}
       >
         <boxGeometry args={[W, 1, 30]} />
         <meshBasicMaterial transparent opacity={0} depthWrite={false} />
       </mesh>
 
-      <Html position={[-W / 2, 0, 0]} pointerEvents="none" zIndexRange={[10, 0]}>
-        <div className="-translate-y-1/2 whitespace-nowrap text-sm">
-          {item.key}
-        </div>
-      </Html>
-      <Html position={[W / 2, 0, 0]} pointerEvents="none" zIndexRange={[10, 0]}>
-        <div className="-translate-x-full -translate-y-1/2 whitespace-nowrap text-right font-mono text-xs">
-          {item.valueLabel}
-        </div>
-      </Html>
+      <Label
+        text={item.key}
+        position={[-W / 2, 0, 0]}
+        anchor="left"
+        color={dark ? "#ffffff" : "#000000"}
+        size={14}
+      />
+      <Label
+        text={item.valueLabel}
+        position={[W / 2, 0, 0]}
+        anchor="right"
+        color={dark ? "#ffffff" : "#000000"}
+        size={12}
+        mono
+      />
     </group>
   );
 }
@@ -324,18 +416,23 @@ function Tower({
   d: number;
   onPick: (r: string, c: string) => void;
 }) {
-  const { e, dark } = useAnim();
-  const mesh = useRef<THREE.Mesh>(null!);
-  const top = useRef<THREE.Group>(null!);
+  const dark = useDark();
+  const mesh = useRef<THREE.Mesh>(null);
+  const top = useRef<THREE.Group>(null);
+  const [hover, setHover] = useState(false);
+  useCursor(hover);
   const H = 8 + cell.n * 64;
   const strong = cell.n > 0.5;
   const blackText = dark ? strong : !strong;
 
-  useFrame(() => {
-    const h = Math.max(0.05, H * e.current);
-    mesh.current.scale.y = h;
-    mesh.current.position.y = h / 2;
-    top.current.position.y = h;
+  useFrame(({ camera }) => {
+    const m = mesh.current;
+    const t = top.current;
+    if (!m || !t) return;
+    const h = Math.max(0.05, H * phaseOf(camera));
+    m.scale.y = h;
+    m.position.y = h / 2;
+    t.position.y = h;
   });
 
   return (
@@ -353,8 +450,8 @@ function Tower({
           ev.stopPropagation();
           onPick(cell.r, cell.c);
         }}
-        onPointerOver={() => (document.body.style.cursor = "pointer")}
-        onPointerOut={() => (document.body.style.cursor = "auto")}
+        onPointerOver={() => setHover(true)}
+        onPointerOut={() => setHover(false)}
       >
         <boxGeometry args={[w, 1, d]} />
         <meshLambertMaterial color={shade(cell.n, dark)} />
@@ -362,21 +459,21 @@ function Tower({
       </mesh>
 
       <group ref={top}>
-        <Html pointerEvents="none" zIndexRange={[10, 0]}>
-          <div
-            className={`-translate-x-1/2 -translate-y-1/2 whitespace-nowrap font-mono text-[11px] ${
-              blackText ? "text-black" : "text-white"
-            }`}
-          >
-            {cell.text}
-          </div>
-        </Html>
+        <Label
+          text={cell.text}
+          position={[0, 0, 0]}
+          anchor="center"
+          color={blackText ? "#000000" : "#ffffff"}
+          size={11}
+          mono
+        />
       </group>
     </group>
   );
 }
 
 function HeatScene({ spec }: { spec: HeatSpec }) {
+  const dark = useDark();
   const { size } = useThree();
   const W = size.width;
   const labelW = 88; // 5.5rem
@@ -388,6 +485,7 @@ function HeatScene({ spec }: { spec: HeatSpec }) {
   const pitch = rowH + gap;
   const flatH = 26 + rows * rowH + (rows - 1) * gap; // header row + grid
   const top = -flatH / 2;
+  const muted = dark ? "rgba(255,255,255,0.5)" : "rgba(0,0,0,0.5)";
 
   const colX = (j: number) =>
     -W / 2 + labelW + gap + j * (colW + gap) + colW / 2;
@@ -396,29 +494,25 @@ function HeatScene({ spec }: { spec: HeatSpec }) {
   return (
     <group>
       {spec.regions.map((r, j) => (
-        <Html
+        <Label
           key={r}
+          text={r}
           position={[colX(j), 0, top + 10]}
-          pointerEvents="none"
-          zIndexRange={[10, 0]}
-        >
-          <div className="-translate-x-1/2 -translate-y-1/2 text-[10px] text-black/50 sm:text-xs dark:text-white/50">
-            {r}
-          </div>
-        </Html>
+          anchor="center"
+          color={muted}
+          size={W < 560 ? 10 : 12}
+        />
       ))}
 
       {spec.categories.map((c, i) => (
-        <Html
+        <Label
           key={c}
+          text={c}
           position={[-W / 2, 0, rowZ(i)]}
-          pointerEvents="none"
-          zIndexRange={[10, 0]}
-        >
-          <div className="-translate-y-1/2 whitespace-nowrap text-xs text-black/50 dark:text-white/50">
-            {c}
-          </div>
-        </Html>
+          anchor="left"
+          color={muted}
+          size={12}
+        />
       ))}
 
       {spec.cells.map((cell) => {
@@ -462,8 +556,6 @@ export default function Stage3D({
   onReady,
   onFlat,
 }: StageProps) {
-  const e = useRef(0);
-
   return (
     <Canvas
       flat
@@ -473,20 +565,21 @@ export default function Stage3D({
       gl={{ antialias: true, alpha: true }}
       onCreated={() => onReady()}
     >
-      <AnimContext.Provider value={{ e, dark }}>
-        <Rig
+      <DarkContext.Provider value={dark}>
+        <ambientLight intensity={0.62 * Math.PI} />
+        <directionalLight position={[30, 80, 40]} intensity={0.45 * Math.PI} />
+
+        <Tilt
           kind={spec.kind}
           target={target}
           flatRef={flatRef}
           onFlat={onFlat}
-        />
-        <ambientLight intensity={0.62 * Math.PI} />
-        <directionalLight position={[30, 80, 40]} intensity={0.45 * Math.PI} />
-
-        {spec.kind === "donut" && <DonutScene spec={spec} />}
-        {spec.kind === "bars" && <BarsScene spec={spec} />}
-        {spec.kind === "heat" && <HeatScene spec={spec} />}
-      </AnimContext.Provider>
+        >
+          {spec.kind === "donut" && <DonutScene spec={spec} />}
+          {spec.kind === "bars" && <BarsScene spec={spec} />}
+          {spec.kind === "heat" && <HeatScene spec={spec} />}
+        </Tilt>
+      </DarkContext.Provider>
     </Canvas>
   );
 }
