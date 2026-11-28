@@ -1,6 +1,8 @@
 "use client";
 
 import { Fragment, useMemo, useState } from "react";
+import View3D from "@/components/three/View3D";
+import { DimToggle, type Dim } from "@/components/Dimension";
 import {
   CATEGORIES,
   DATA,
@@ -347,11 +349,13 @@ function DonutChart({
   selected,
   metric,
   onSelect,
+  dim,
 }: {
   slices: { key: string; value: number }[];
   selected: string;
   metric: Metric;
   onSelect: (key: string) => void;
+  dim: Dim;
 }) {
   const total = slices.reduce((a, s) => a + s.value, 0) || 1;
   const R = 70;
@@ -375,56 +379,69 @@ function DonutChart({
       ? total
       : (slices.find((s) => s.key === selected)?.value ?? 0);
 
+  const top = Math.max(...slices.map((s) => s.value), 1);
+
   return (
     <div className="flex flex-col items-center gap-6 sm:flex-row">
-      <svg
-        viewBox="0 0 200 200"
-        className="h-48 w-48 shrink-0"
-        role="img"
-        aria-label="Donut chart showing each share of the total"
-      >
-        <g transform="rotate(-90 100 100)">
-          {slices.map((s, idx) => {
-            const drawn = Math.max(lens[idx] - 2, 0);
-            return (
-              <circle
-                key={s.key}
-                cx={100}
-                cy={100}
-                r={R}
-                fill="none"
-                stroke="currentColor"
-                strokeOpacity={opacityOf(s.key, idx)}
-                strokeWidth={28}
-                strokeDasharray={`${drawn} ${C - drawn}`}
-                strokeDashoffset={-offsets[idx]}
-                className="cursor-pointer transition-all duration-500"
-                onClick={() => onSelect(s.key)}
-              />
-            );
-          })}
-        </g>
-        <text
-          x={100}
-          y={96}
-          textAnchor="middle"
-          fontSize="11"
-          fill="currentColor"
-          fillOpacity={0.5}
+      <div className="relative h-48 w-48 shrink-0">
+        <View3D
+          dim={dim}
+          className="h-full w-full"
+          spec={{
+            kind: "donut",
+            rOuter: R + 14,
+            rInner: R - 14,
+            track: false,
+            activeKey: null,
+            onSelect,
+            items: slices.map((s, idx) => ({
+              key: s.key,
+              start: offsets[idx] / C,
+              len: Math.max(lens[idx] - 2, 0) / C,
+              o: opacityOf(s.key, idx),
+              h: s.value / top,
+            })),
+          }}
         >
-          {selected === "All" ? "Total" : selected}
-        </text>
-        <text
-          x={100}
-          y={118}
-          textAnchor="middle"
-          fontSize="17"
-          fontWeight="600"
-          fill="currentColor"
-        >
-          {formatMetric(metric, centre)}
-        </text>
-      </svg>
+          <svg
+            viewBox="0 0 200 200"
+            className="h-48 w-48"
+            role="img"
+            aria-label="Donut chart showing each share of the total"
+          >
+            <g transform="rotate(-90 100 100)">
+              {slices.map((s, idx) => {
+                const drawn = Math.max(lens[idx] - 2, 0);
+                return (
+                  <circle
+                    key={s.key}
+                    cx={100}
+                    cy={100}
+                    r={R}
+                    fill="none"
+                    stroke="currentColor"
+                    strokeOpacity={opacityOf(s.key, idx)}
+                    strokeWidth={28}
+                    strokeDasharray={`${drawn} ${C - drawn}`}
+                    strokeDashoffset={-offsets[idx]}
+                    className="cursor-pointer transition-all duration-500"
+                    onClick={() => onSelect(s.key)}
+                  />
+                );
+              })}
+            </g>
+          </svg>
+        </View3D>
+
+        <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center text-center">
+          <span className="text-[10.5px] leading-none text-black/50 dark:text-white/50">
+            {selected === "All" ? "Total" : selected}
+          </span>
+          <span className="mt-1.5 text-base font-semibold leading-none">
+            {formatMetric(metric, centre)}
+          </span>
+        </div>
+      </div>
 
       <ul className="w-full space-y-1">
         {slices.map((s, idx) => (
@@ -460,73 +477,98 @@ function Heatmap({
   region,
   category,
   onPick,
+  dim,
 }: {
   cells: Record<string, number>;
   metric: Metric;
   region: Region | "All";
   category: Category | "All";
   onPick: (r: Region, c: Category) => void;
+  dim: Dim;
 }) {
   const max = Math.max(...Object.values(cells), 1);
 
   return (
     <div>
-      <div className="grid grid-cols-[5.5rem_repeat(4,minmax(0,1fr))] gap-1.5 text-xs">
-        <span />
-        {REGIONS.map((r) => (
-          <span
-            key={r}
-            className="pb-1 text-center text-[10px] text-black/50 sm:text-xs dark:text-white/50"
-          >
-            {r}
-          </span>
-        ))}
-
-        {CATEGORIES.map((c) => (
-          <Fragment key={c}>
-            <span
-              title={c}
-              className="flex items-center truncate text-black/50 dark:text-white/50"
-            >
-              {c}
-            </span>
-            {REGIONS.map((r) => {
+      <View3D
+        dim={dim}
+        minHeight3d={470}
+        spec={{
+          kind: "heat",
+          regions: [...REGIONS],
+          categories: [...CATEGORIES],
+          cells: CATEGORIES.flatMap((c) =>
+            REGIONS.map((r) => {
               const v = cells[`${r}|${c}`] ?? 0;
-              const alpha = 0.08 + 0.82 * (v / max);
-              const strong = alpha > 0.5;
-              const on = region === r && category === c;
-              return (
-                <button
-                  key={r}
-                  type="button"
-                  onClick={() => onPick(r, c)}
-                  aria-pressed={on}
-                  aria-label={`${r}, ${c}: ${formatMetric(metric, v)}`}
-                  className={`relative flex h-11 items-center justify-center overflow-hidden rounded-lg border text-[11px] transition sm:text-xs ${
-                    on
-                      ? "border-black ring-2 ring-black dark:border-white dark:ring-white"
-                      : "border-black/15 hover:border-black dark:border-white/20 dark:hover:border-white"
-                  }`}
-                >
-                  <span
-                    className="absolute inset-0 bg-black dark:bg-white"
-                    style={{ opacity: alpha }}
-                  />
-                  <span
-                    className={`relative font-mono ${
-                      strong
-                        ? "text-white dark:text-black"
-                        : "text-black dark:text-white"
+              return {
+                r,
+                c,
+                n: 0.08 + 0.82 * (v / max),
+                text: formatMetric(metric, v),
+                on: region === r && category === c,
+              };
+            })
+          ),
+          onPick: (r, c) => onPick(r as Region, c as Category),
+        }}
+      >
+        <div className="grid grid-cols-[5.5rem_repeat(4,minmax(0,1fr))] gap-1.5 text-xs">
+          <span />
+          {REGIONS.map((r) => (
+            <span
+              key={r}
+              className="pb-1 text-center text-[10px] text-black/50 sm:text-xs dark:text-white/50"
+            >
+              {r}
+            </span>
+          ))}
+
+          {CATEGORIES.map((c) => (
+            <Fragment key={c}>
+              <span
+                title={c}
+                className="flex items-center truncate text-black/50 dark:text-white/50"
+              >
+                {c}
+              </span>
+              {REGIONS.map((r) => {
+                const v = cells[`${r}|${c}`] ?? 0;
+                const alpha = 0.08 + 0.82 * (v / max);
+                const strong = alpha > 0.5;
+                const on = region === r && category === c;
+                return (
+                  <button
+                    key={r}
+                    type="button"
+                    onClick={() => onPick(r, c)}
+                    aria-pressed={on}
+                    aria-label={`${r}, ${c}: ${formatMetric(metric, v)}`}
+                    className={`relative flex h-11 items-center justify-center overflow-hidden rounded-lg border text-[11px] transition sm:text-xs ${
+                      on
+                        ? "border-black ring-2 ring-black dark:border-white dark:ring-white"
+                        : "border-black/15 hover:border-black dark:border-white/20 dark:hover:border-white"
                     }`}
                   >
-                    {formatMetric(metric, v)}
-                  </span>
-                </button>
-              );
-            })}
-          </Fragment>
-        ))}
-      </div>
+                    <span
+                      className="absolute inset-0 bg-black dark:bg-white"
+                      style={{ opacity: alpha }}
+                    />
+                    <span
+                      className={`relative font-mono ${
+                        strong
+                          ? "text-white dark:text-black"
+                          : "text-black dark:text-white"
+                      }`}
+                    >
+                      {formatMetric(metric, v)}
+                    </span>
+                  </button>
+                );
+              })}
+            </Fragment>
+          ))}
+        </div>
+      </View3D>
 
       <div className="mt-4 flex items-center gap-2 text-xs text-black/50 dark:text-white/50">
         <span>Low</span>
@@ -551,6 +593,7 @@ export default function SalesDashboard() {
   const [breakdown, setBreakdown] = useState<"category" | "region">("category");
   const [trendType, setTrendType] = useState<TrendType>("line");
   const [view, setView] = useState<View>("bars");
+  const [dim, setDim] = useState<Dim>("2d");
 
   const filtersActive = region !== "All" || category !== "All";
 
@@ -783,43 +826,69 @@ export default function SalesDashboard() {
               value={view}
               onChange={setView}
             />
+            <div>
+              <p className="text-xs uppercase tracking-widest text-black/50 dark:text-white/50">
+                Dimension
+              </p>
+              <div className="mt-2">
+                <DimToggle value={dim} onChange={setDim} />
+              </div>
+            </div>
           </div>
         </div>
 
         {view === "bars" ? (
-        <ul className="mt-6 space-y-2">
-          {bars.map((b) => {
-            const on = selected === "All" || selected === b.key;
-            return (
-              <li key={b.key}>
-                <button
-                  type="button"
-                  onClick={() => toggle(b.key)}
-                  aria-pressed={selected === b.key}
-                  className="group grid w-full grid-cols-[6rem_1fr_6.5rem] items-center gap-3 py-1 text-left text-sm"
-                >
-                  <span>{b.key}</span>
-                  <span className="h-3 rounded-full bg-black/5 dark:bg-white/10">
-                    <span
-                      className={`block h-3 rounded-full transition-all duration-500 ${
-                        on
-                          ? "bg-black dark:bg-white"
-                          : "bg-black/20 group-hover:bg-black/50 dark:bg-white/25 dark:group-hover:bg-white/50"
-                      }`}
-                      style={{ width: `${(b.value / barMax) * 100}%` }}
-                    />
-                  </span>
-                  <span className="text-right font-mono text-xs">
-                    {formatMetric(metric, b.value)}{" "}
-                    <span className="text-black/40 dark:text-white/40">
-                      {Math.round((b.value / barTotal) * 100)}%
-                    </span>
-                  </span>
-                </button>
-              </li>
-            );
-          })}
-        </ul>
+          <View3D
+            dim={dim}
+            className="mt-6"
+            minHeight3d={240 + bars.length * 18}
+            spec={{
+              kind: "bars",
+              onSelect: toggle,
+              items: bars.map((b) => ({
+                key: b.key,
+                n: b.value / barMax,
+                on: selected === "All" || selected === b.key,
+                valueLabel: `${formatMetric(metric, b.value)} ${Math.round(
+                  (b.value / barTotal) * 100
+                )}%`,
+              })),
+            }}
+          >
+            <ul className="space-y-2">
+              {bars.map((b) => {
+                const on = selected === "All" || selected === b.key;
+                return (
+                  <li key={b.key}>
+                    <button
+                      type="button"
+                      onClick={() => toggle(b.key)}
+                      aria-pressed={selected === b.key}
+                      className="group grid w-full grid-cols-[6rem_1fr_6.5rem] items-center gap-3 py-1 text-left text-sm"
+                    >
+                      <span>{b.key}</span>
+                      <span className="h-3 rounded-full bg-black/5 dark:bg-white/10">
+                        <span
+                          className={`block h-3 rounded-full transition-all duration-500 ${
+                            on
+                              ? "bg-black dark:bg-white"
+                              : "bg-black/20 group-hover:bg-black/50 dark:bg-white/25 dark:group-hover:bg-white/50"
+                          }`}
+                          style={{ width: `${(b.value / barMax) * 100}%` }}
+                        />
+                      </span>
+                      <span className="text-right font-mono text-xs">
+                        {formatMetric(metric, b.value)}{" "}
+                        <span className="text-black/40 dark:text-white/40">
+                          {Math.round((b.value / barTotal) * 100)}%
+                        </span>
+                      </span>
+                    </button>
+                  </li>
+                );
+              })}
+            </ul>
+          </View3D>
         ) : (
           <div className="mt-6">
             <DonutChart
@@ -827,6 +896,7 @@ export default function SalesDashboard() {
               selected={selected}
               metric={metric}
               onSelect={toggle}
+              dim={dim}
             />
           </div>
         )}
@@ -839,9 +909,12 @@ export default function SalesDashboard() {
 
       {/* Heatmap */}
       <div className="rounded-2xl border border-black/15 p-6 dark:border-white/20">
-        <h3 className="text-xs font-medium uppercase tracking-widest text-black/50 dark:text-white/50">
-          {metricLabel[metric]} by region and category
-        </h3>
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <h3 className="text-xs font-medium uppercase tracking-widest text-black/50 dark:text-white/50">
+            {metricLabel[metric]} by region and category
+          </h3>
+          <DimToggle value={dim} onChange={setDim} />
+        </div>
         <div className="mt-6">
           <Heatmap
             cells={cells}
@@ -849,6 +922,7 @@ export default function SalesDashboard() {
             region={region}
             category={category}
             onPick={pickCell}
+            dim={dim}
           />
         </div>
         <p className="mt-4 text-xs text-black/50 dark:text-white/50">
